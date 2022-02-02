@@ -47,7 +47,6 @@
 
 <script>
 import axios from "axios";
-
 export default {
   name: "Game",
   computed: {
@@ -59,19 +58,21 @@ export default {
     console.log("this.gameID", this.$route.params.id);
     if(!this.gameID){
       console.log("no gameID, no luck")
+      this.loading = false;
       this.gameFound = false;
       return;
     }
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
+      this.loading = false;
       console.log(result);
       this.spieler = result.data.spieler;
       this.runden = result.data.runden;
       this.gameFound = true;
-      console.log("game Found!")
     }).catch(error => console.error(error));
   },
   data(){
     return {
+      loading: true,
       spieler: [],
       runden: [],
       player_input_array: [],

@@ -1,5 +1,8 @@
 <template>
-  <div id="abfrage" v-if="parteiEingabe">
+  <div id="loading" v-if="loading">
+    Lade...
+  </div>
+  <div id="abfrage" v-else-if="parteiEingabe">
     <div id="title-wrapper">
       <span>Re</span>
     </div>
@@ -30,7 +33,7 @@
     </div>
     <div id="btn-wrapper">
       <button @click="skipDetailedEntry()">Zurück zum Spiel</button>
-      <button @click="processPunkte()" id="more-info-btn">Weitere Infos eingeben</button>
+      <button @click="enterDetailedEntry()" id="more-info-btn">Weitere Infos eingeben</button>
     </div>
   </div>
   <spiel-abfrage
@@ -76,25 +79,18 @@ export default {
   },
   created() {
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
-      console.log(result);
+      this.loading = false;
       this.players = result.data.spieler.filter(spieler => !spieler.aussetzen);
-      if(result.data.spieler.filter(spieler => spieler.aussetzen).length === 1){
-        this.aussetzer = result.data.spieler.filter(spieler => spieler.aussetzen)[0];
-        this.aussetzer.punkte = 0;
-        delete this.aussetzer.kommt_raus;
-        delete this.aussetzer.name;
-        delete this.aussetzer.aussetzen;
-      }
     }).catch(error => console.error(error));
   },
   data() {
     return {
+      loading: true,
       ereignisse: ["Partei", "Punkte", "Hochzeit", "Schweine", "Armut"],
       current_ereignis_index: 0,
       firstPlayer: null,
       punkte: null,
       winner: null,
-      aussetzer: null,
       players: []
     }
   },
@@ -151,8 +147,6 @@ export default {
       console.log(playerIDarray)
     },
     processPunkte() {
-      this.current_ereignis_index++;
-
       this.players.forEach(player => {
         if (player.partei === this.winner) {
           player.punkte = this.punkte * player.multiplicator;
@@ -162,13 +156,17 @@ export default {
         }
       });
     },
+    enterDetailedEntry() {
+      this.current_ereignis_index++;
+      this.processPunkte();
+    },
     skipDetailedEntry() {
       this.processPunkte();
       this.sendResults();
     },
     sendResults() {
       // todo loading animation here
-
+      this.loading = true;
       // sanitze data
       this.players.forEach(player => {
         delete player.name;
@@ -177,15 +175,14 @@ export default {
         delete player.aussetzen;
       });
       let requestPlayerBody = this.players;
-      if(this.aussetzer){
-        requestPlayerBody.push(this.aussetzer);
-      }
+
       const requestBody = {
         "spielerArray": requestPlayerBody,
         "punkte": this.punkte * 1, // *1 is used to convert string to int
         "solo": this.solo
       }
       axios.post(`${this.$hostname}/game/${this.gameID}`, requestBody).then(data => {
+        this.loading = false; // useless but whatever
         console.log(data);
         this.$router.push({path: `/game/${this.gameID}`});
       }).catch(error => console.error(error));

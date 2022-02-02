@@ -24,7 +24,7 @@ Vue.prototype.$hostname = 'http://localhost:5000'
 
 
 import NewGame from "@/views/NewGame"
-import Game from "@/modules/Game"
+import Game from "@/views/Game"
 import Eingabe from "@/views/Eingabe";
 
 const router = new VueRouter({
