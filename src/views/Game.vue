@@ -1,5 +1,8 @@
 <template>
-  <div id="game" v-if="gameFound">
+  <div v-if="loading">
+    Lade...
+  </div>
+  <div id="game" v-else-if="gameFound">
     <div id="overview">
       <div v-for="player in spieler" :key="player.id" class="player">
         <div class="player-wrapper kommt_raus" v-if="player.kommt_raus">
@@ -14,8 +17,8 @@
           <span class="player-name">{{ player.name }}</span>
         </div>
         <div class="player-points"> {{ player.zwischenstand }}</div>
-        <div v-for="(punkte, index) in pointsForPlayer(player.id)" :key="player.id + '.' + index + '.' + punkte">
-          <div class="player-points">{{ punkte }}</div>
+        <div v-for="(runde, index) in pointsForPlayer(player.id)" :key="player.id + '.' + index + '.' + punkte">
+          <div class="player-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
           <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
         </div>
       </div>
@@ -27,9 +30,9 @@
         <div v-for="(runde, index) in runden" :key="runde.punkte + '-' +index">
           <div class="player-points">
             <span>{{runde.punkte}}</span>
-            <div v-if="runde.solo">
+            <span v-if="runde.solo">
               Solo
-            </div>
+            </span>
             <!-- #todo hier kommen dann Solo und BockRunden rein-->
           </div>
           <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
@@ -87,9 +90,9 @@ export default {
         console.log(player);
         if(player){
           console.log(player.name, player.zwischenstand);
-          result.push(player.zwischenstand);
+          result.push({punkte: player.zwischenstand, solo: player.id === runde.solo});
         }else{
-          result.push("Pause");
+          result.push({punkte: null});
         }
       });
       return result;
@@ -98,7 +101,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/css/colors.scss";
+
 #game{
   display: flex;
   flex-direction: column;
@@ -120,42 +125,42 @@ export default {
 .player-wrapper, #punkte-wrapper{
   padding: 7px;
   text-align: center;
-  background: #2c3e50;
-  border-bottom: 1px solid #1f2a34;
+  background: $secondColor;
+  border-bottom: 1px solid $secondColorDark;
   display: flex;
   flex-direction: column;
   height: 60px;
 }
 .player-wrapper.kommt_raus{
-  background: #FFE1C6;
-  border-bottom: 1px solid #FFA85C;
+  background: $accentColor;
+  border-bottom: 1px solid $accentColorDark;
   font-size: 0.8em;
 }
 
 .player-wrapper.kommt_raus > .player-name{
-  color: #1f2a34;
+  color: $accentColorText;
 }
 .player-wrapper.aussetzen {
-  background: #FFC6D9;
-  border-bottom: 1px solid #FF70A0;
+  background: $dangerColor;
+  border-bottom: 1px solid $dangerColorDark;
   font-size: 0.8em;
 }
 .player-wrapper.aussetzen > .player-name{
-  color: #1f2a34;
+  color: $dangerColorText;
 }
 .player-name, #punkte-header{
   font-size: 1.2rem;
-  color: white;
+  color: $secondColorText;
 }
 .player-info{
   line-height: 0.7rem;
   margin-top: -2px;
 }
 .player{
-  border-right: 1px solid #1f2a34;
+  border-right: 1px solid $secondColorDark;
 }
 #overview-punkte{
-  border-left: 1px solid #1f2a34;
+  border-left: 1px solid $secondColorDark;
 }
 .player-points{
   padding: 7px;
@@ -163,16 +168,16 @@ export default {
   text-align: center;
 }
 .divider{
-  background: #1f2a34;
+  background: $secondColorDark;
   height: 1px;
   width: 100%;
 }
 #enter-results-btn{
-  background: #2c3e50;
-  color: white;
+  background: $secondColor;
+  color: $secondColorText;
   margin: 5px;
   border-radius: 2px;
-  border: 1px solid black;
+  border: 1px solid $secondColorDark;
   font-size: 1.2em;
 }
 </style>

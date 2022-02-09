@@ -13,7 +13,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "@/css/colors.scss";
+
 body, html{
   margin: 0;
   padding: 0;
@@ -26,14 +28,15 @@ body, html{
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: $secondColor;
+  background: $background;
 }
 #header{
-  background: #42b983;
+  background: $mainColor;
   padding: 14px;
   text-align: center;
-  color: white;
-  text-shadow: 1px 1px 2px #2c3e50;
+  color: $mainColorText;
+  text-shadow: 1px 1px 2px $secondColorDark;
   font-weight: bold;
   font-size: 1.2em;
 }

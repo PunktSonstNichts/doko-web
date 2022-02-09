@@ -1,7 +1,11 @@
 <template>
 <div id="abfrage">
   <div id="title-wrapper">
-    <span>{{ereignis}}</span>
+    <img  id="icon" :src="getImgUrl(ereignis)"/>
+    <span id="title">{{ereignis}}</span>
+    <span id="subtext">
+      Wer hatte {{ereignis}}?
+    </span>
   </div>
   <div id="player-wrapper">
     <div v-for="player in players"
@@ -32,6 +36,16 @@ export default {
       type: String,
     }
   },
+  created() {
+    // disable Hochzeit entry for Kontra-Pertei members
+    if(this.ereignis === "Hochzeit"){
+      this.players.forEach(player => {
+        if(player.partei !== "Re"){
+          player.aussetzen = true;
+        }
+      });
+    }
+  },
   methods: {
     progressSelection(player){
         if(player == null){
@@ -41,46 +55,66 @@ export default {
             this.$emit("eingabe", player.id);
           }
         }
+    },
+    getImgUrl(ereignis) {
+      var images = require.context('../assets/', false, /\.png$/)
+      return images('./' + ereignis + "_Icon.png")
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/css/colors.scss";
+
 #abfrage{
   display: flex;
   flex-direction: column;
 }
 #title-wrapper{
-  height: 20vmax;
-  width: 20vmax;;
   margin: 16px auto;
-  border-radius: 50%;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-  border: 6px solid #42b983;
-  box-shadow: inset 0 0 12px #1f2a34;
-  background: #42b983;
-  font-weight: bold;
-  font-size: 1.4em;
 }
-#player-wrapper{
-  display: flex;
 
-  border-top: 1px solid #1f2a34;
-  border-bottom: 1px solid #1f2a34;
+#icon{
+  width: 256px;
+  height: 256px;
+}
+#title{
+  font-weight: bold;
+  font-size: 1.6em;
+  color: $secondColorDark;
+}
+#subtext{
+  color: $secondColor;
+}
+
+#player-wrapper{
+  margin: 8px 16px;
+  display: flex;
+  border-top: 1px solid $secondColorDark;
+  border-bottom: 1px solid $secondColorDark;
 }
 .player-selection{
   flex: 1;
   font-size: 1.2em;
+  font-weight: bold;
   text-align: center;
-  padding: 4px 6px;
-  border-left: 1px solid #2c3e50;
+  padding: 1em 12px;
+  border-left: 1px solid $secondColor;
+}
+.player-selection:last-of-type{
+  border-right: 1px solid $secondColor;
 }
 .player-selection.selected-player{
-  background: #2c3e50;
-  color: white;
+  background: $secondColor;
+  color: $secondColorText;
+}
+.player-selection.player-disabled{
+  text-decoration: line-through;
 }
 #abort{
   text-align: center;

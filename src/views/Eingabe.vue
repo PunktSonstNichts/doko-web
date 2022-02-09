@@ -191,32 +191,26 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/css/colors.scss";
+
 #abfrage {
   display: flex;
   flex-direction: column;
 }
 
 #title-wrapper {
-  height: 20vmax;
-  width: 20vmax;;
   margin: 16px auto;
-  border-radius: 50%;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-  border: 6px solid #42b983;
-  box-shadow: inset 0 0 12px #1f2a34;
-  background: #42b983;
-  font-weight: bold;
-  font-size: 1.4em;
 }
 
 #player-wrapper {
   display: flex;
-
-  border-top: 1px solid #1f2a34;
-  border-bottom: 1px solid #1f2a34;
+  border-top: 1px solid $secondColorDark;
+  border-bottom: 1px solid $secondColorDark;
 }
 
 .player-selection {
@@ -225,14 +219,13 @@ export default {
   text-align: center;
   padding: 4px 6px;
 }
-
-.player-selection:not(:first-of-type) {
-  border-left: 1px solid #2c3e50;
+.player-selection:last-of-type{
+  border-right: 1px solid $secondColor;
 }
 
 .player-selection.selected-player {
-  background: #2c3e50;
-  color: white;
+  background: $secondColor;
+  color: $secondColorText;
 }
 
 #abort {
@@ -274,12 +267,12 @@ export default {
 #winner-partei-selection span {
   text-align: center;
   padding: 6px 8px;
-  border: 1px solid #2c3e50;
+  border: 1px solid $secondColor;
 }
 
 #winner-partei-selection :checked + span {
-  background: #2c3e50;
-  color: white;
+  background: $secondColor;
+  color: $secondColorText;
 }
 
 #btn-wrapper {
@@ -288,11 +281,11 @@ export default {
 }
 
 #more-info-btn {
-  background: #2c3e50;
-  color: white;
+  background: $secondColor;
+  color: $secondColorText;
   margin: 5px;
   border-radius: 2px;
-  border: 1px solid black;
+  border: 1px solid $secondColorDark;
   font-size: 1.2em;
 }
 </style>
