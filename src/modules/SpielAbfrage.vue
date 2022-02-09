@@ -46,6 +46,21 @@ export default {
       });
     }
   },
+  watch: {
+    ereignis(){
+      if(this.ereignis === "Hochzeit"){
+        this.players.forEach(player => {
+          if(player.partei !== "Re"){
+            player.aussetzen = true;
+          }
+        });
+      }else{
+        this.players.forEach(player => {
+          player.aussetzen = false
+        });
+      }
+    }
+  },
   methods: {
     progressSelection(player){
         if(player == null){

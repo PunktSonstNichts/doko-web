@@ -3,9 +3,11 @@
     Lade...
   </div>
   <div id="abfrage" v-else-if="parteiEingabe">
+    <span>Zunächst, wer hat zusammengespielt?</span>
     <div id="title-wrapper">
       <span>Re</span>
     </div>
+    <span>Welche Spieler waren die "Re"-Partei?</span>
     <div id="player-wrapper">
       <div v-for="player in players"
            :key="player.id"
@@ -25,7 +27,7 @@
         <label><input type="radio" v-model="winner" value="Re"/><span>Re</span></label>
         <label><input type="radio" v-model="winner" value="Kontra"/><span>Kontra</span></label>
       </div>
-      {{ winningPlayersString }}
+      <span>{{ winningPlayersString }} </span>
     </div>
     <div id="punkte-wrapper">
       Und wieviele Punkte?
@@ -165,6 +167,10 @@ export default {
       this.sendResults();
     },
     sendResults() {
+      if(!this.winner || !this.punkte){
+        // todo Fehlermeldung
+        return;
+      }
       // todo loading animation here
       this.loading = true;
       // sanitze data
@@ -208,6 +214,7 @@ export default {
 }
 
 #player-wrapper {
+  margin: 8px 16px;
   display: flex;
   border-top: 1px solid $secondColorDark;
   border-bottom: 1px solid $secondColorDark;
@@ -216,8 +223,10 @@ export default {
 .player-selection {
   flex: 1;
   font-size: 1.2em;
+  font-weight: bold;
   text-align: center;
-  padding: 4px 6px;
+  padding: 1em 12px;
+  border-left: 1px solid $secondColor;
 }
 .player-selection:last-of-type{
   border-right: 1px solid $secondColor;
@@ -266,7 +275,7 @@ export default {
 
 #winner-partei-selection span {
   text-align: center;
-  padding: 6px 8px;
+  padding: 8px 16px;
   border: 1px solid $secondColor;
 }
 

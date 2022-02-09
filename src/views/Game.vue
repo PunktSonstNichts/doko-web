@@ -92,7 +92,7 @@ export default {
           console.log(player.name, player.zwischenstand);
           result.push({punkte: player.zwischenstand, solo: player.id === runde.solo});
         }else{
-          result.push({punkte: null});
+          result.push({punkte: "-/-"});
         }
       });
       return result;
