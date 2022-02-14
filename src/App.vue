@@ -10,6 +10,15 @@
 <script>
 export default {
   name: 'App',
+  created() {
+    if(!localStorage.getItem("access_token")){
+      console.error(localStorage.getItem("access_token"));
+      this.$router.replace({
+        path: "/login",
+        query: { redirect: this.$router.currentRoute.fullPath }
+      });
+    }
+  }
 }
 </script>
 
@@ -19,9 +28,10 @@ export default {
 body, html{
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 #app {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
 

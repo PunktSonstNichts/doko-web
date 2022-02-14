@@ -1,10 +1,9 @@
 <template>
   <div :class="inputWrapperCssClasses">
     <input
+        v-bind="$attrs"
         class="input_input"
         id="input"
-        name="input"
-        type="text"
         v-model="input"
         @change="handleChange"
         @focus="handleFocus"

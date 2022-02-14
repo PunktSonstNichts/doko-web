@@ -5,7 +5,7 @@
       <TextInput type="text" placeholder="Spieler 2" v-model="players.player2"/>
       <TextInput type="text" placeholder="Spieler 3" v-model="players.player3"/>
       <TextInput type="text" placeholder="Spieler 4" v-model="players.player4"/>
-      <TextInput type="text" placeholder="Spieler 5" v-model="players.player5"/>
+      <TextInput type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
     <button id="create-game-btn" @click="createRound()">Spiel starten!</button>
   </div>
 </template>
