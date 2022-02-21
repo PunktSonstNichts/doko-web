@@ -1,4 +1,5 @@
 # doko
+Front-End um Mitspieler, Punkte und Ereignisse für einen Doko-Abend digital aufzuschreiben.
 
 ## Project setup
 ```
