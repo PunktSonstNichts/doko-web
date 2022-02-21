@@ -168,7 +168,7 @@ export default {
   line-height: 0.7rem;
   margin-top: -2px;
 }
-.player{
+.player:not(:last-of-type){
   border-right: 1px solid $secondColorDark;
 }
 #overview-punkte{

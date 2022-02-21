@@ -1,11 +1,12 @@
 <template>
   <div id="create-game">
     <h1>neues Spiel starten</h1>
-      <TextInput placeholder="Spieler 1" v-model="players.player1" />
-      <TextInput type="text" placeholder="Spieler 2" v-model="players.player2"/>
-      <TextInput type="text" placeholder="Spieler 3" v-model="players.player3"/>
-      <TextInput type="text" placeholder="Spieler 4" v-model="players.player4"/>
-      <TextInput type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
+    <TextInput autocomplete="false" type="text" placeholder="Spieler 1" v-model="players.player1" />
+    <TextInput autocomplete="false" type="text" placeholder="Spieler 2" v-model="players.player2"/>
+    <TextInput autocomplete="false" type="text" placeholder="Spieler 3" v-model="players.player3"/>
+    <TextInput autocomplete="false" type="text" placeholder="Spieler 4" v-model="players.player4"/>
+    <TextInput autocomplete="false" type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
+    <div id="entry-error" :class="errorMsg ? 'active' : ''"> {{errorMsg}} </div>
     <button id="create-game-btn" @click="createRound()">Spiel starten!</button>
   </div>
 </template>
@@ -22,6 +23,7 @@ export default {
   },
   data() {
     return {
+      errorMsg: null,
       players: {
         player1: null,
         player2: null,
@@ -33,11 +35,14 @@ export default {
   },
   methods: {
     createRound() {
+      this.errorMsg = null;
       if (this.checkUserInput()) {
         axios.post(`${this.$hostname}/new`, this.players).then(result => {
           console.log(result);
           this.$router.push({path: `/game/${result.data._id}`});
         }).catch(error => console.error(error));
+      }else{
+        this.errorMsg = "Spieler 1-4 müssen gesetzt sein."
       }
     },
     checkUserInput() {
@@ -48,7 +53,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+@import "@/css/colors.scss";
+
 h1 {
   margin: 32px 0 0;
   text-align: center;
@@ -72,11 +79,19 @@ a {
   font-size: 1.2em;
   margin-bottom: 12px;
 }
-
+#entry-error{
+  margin: 5px;
+  color: $dangerColorDark;
+  text-align: center;
+  border: 1px solid;
+}
+#entry-error.active{
+  border: 1px solid $dangerColor;
+}
 #create-game-btn {
-  color: #2c3e50;
-  background: #FFE1C6;
-  border: 1px solid #FFA85C;
+  color: $accentColorText;
+  background: $accentColor;
+  border: 1px solid $accentColorDark;
   margin: 5px;
   border-radius: 2px;
   font-size: 1.2em;

@@ -1,7 +1,8 @@
 <template>
   <div id="login-wrapper">
-    <TextInput type="text" placeholder="Name" v-model="login.username"/>
-    <TextInput type="password" placeholder="Passwort" v-model="login.password"/>
+    <TextInput autocomplete="false" type="text" placeholder="Name" v-model="login.username"/>
+    <TextInput autocomplete="false" type="password" placeholder="Passwort" v-model="login.password"/>
+    <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
     <button id="login-btn" @click="handleLoginClick">anmelden</button>
   </div>
 </template>
@@ -16,6 +17,7 @@ export default {
   data(){
     return {
       loading: false,
+      errorMsg: null,
       login: {
         username: null,
         password: null
@@ -28,6 +30,7 @@ export default {
     },
     processLogin(){
       this.loading = true;
+      this.errorMsg = null;
       axios.post(`${this.$hostname}/login`, this.login).then(response => {
         this.loading = false;
         console.log(response);
@@ -38,7 +41,10 @@ export default {
         }else{
           this.$router.push('/')
         }
-      }).catch(error => console.error(error));
+      }).catch(error => {
+        console.error(error);
+        this.errorMsg = error.data.msg;
+      });
     }
   }
 }
@@ -51,7 +57,15 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
+#entry-error{
+  margin: 5px;
+  color: $dangerColorDark;
+  text-align: center;
+  border: 1px solid;
+}
+#entry-error.active{
+  border: 1px solid $dangerColor;
+}
 #login-btn{
   background: $secondColor;
   color: $secondColorText;
