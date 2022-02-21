@@ -3,6 +3,9 @@
   <div id="game" v-else-if="gameFound">
     <div id="overview">
       <div v-for="player in spieler" :key="player.id" class="player">
+        <div v-if="isKonsumView" class="player-konsum">
+          {{ player.name }} hat schon X Bier getrunken.
+        </div>
         <div class="player-wrapper kommt_raus" v-if="player.kommt_raus">
           <span class="player-name">{{ player.name }}</span>
           <span class="player-info">kommt raus</span>
@@ -14,13 +17,14 @@
         <div class="player-wrapper" v-else>
           <span class="player-name">{{ player.name }}</span>
         </div>
-        <div class="player-points"> {{ player.zwischenstand }}</div>
-        <div v-for="(runde, index) in pointsForPlayer(player.id)" :key="player.id + '.' + index + '.' + punkte">
-          <div class="player-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
-          <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
+        <div v-if="!isKonsumView">
+          <div v-for="(runde, index) in pointsForPlayer(player.id)" :key="player.id + '.' + index + '.' + punkte">
+            <div class="player-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
+            <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
+          </div>
         </div>
       </div>
-      <div id="overview-punkte">
+      <div id="overview-punkte" v-if="!isKonsumView">
         <div id="punkte-wrapper">
           <span id="punkte-header">P</span>
         </div>
@@ -81,7 +85,7 @@ export default {
       loading: true,
       spieler: [],
       runden: [],
-      player_input_array: [],
+      isKonsumView: false,
       gameFound: false
     }
   },
@@ -99,6 +103,9 @@ export default {
         }
       });
       return result;
+    },
+    toggleKonsumModal(){
+      this.isKonsumView = !this.isKonsumView;
     }
   }
 }
