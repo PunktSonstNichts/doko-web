@@ -32,6 +32,7 @@
       <input type="number" v-model="punkte"/>
     </div>
     <div id="btn-wrapper">
+      <div id="entry-error" :class="errorMsg ? 'active' : ''"> {{errorMsg}} </div>
       <button @click="skipDetailedEntry()">Zurück zum Spiel</button>
       <button @click="enterDetailedEntry()" id="more-info-btn">Weitere Infos eingeben</button>
     </div>
@@ -87,6 +88,7 @@ export default {
   data() {
     return {
       loading: true,
+      errorMsg: null,
       ereignisse: ["Partei", "Punkte", "Hochzeit", "Schweine", "Armut"],
       current_ereignis_index: 0,
       firstPlayer: null,
@@ -158,19 +160,30 @@ export default {
       });
     },
     enterDetailedEntry() {
-      this.current_ereignis_index++;
-      this.processPunkte();
+      if(this.checkInput()){
+        this.processPunkte();
+        this.current_ereignis_index++;
+      }
     },
     skipDetailedEntry() {
-      this.processPunkte();
-      this.sendResults();
+      if(this.checkInput()){
+        this.processPunkte();
+        this.sendResults();
+      }
+    },
+    checkInput(){
+      if(!this.winner){
+        this.errorMsg = "Wer hat gewonnen?";
+        return false;
+      }
+      if(!this.punkte){
+        this.errorMsg = "Wie viele Punkte gab es?";
+        return false;
+      }
+      this.errorMsg = null;
+      return  true;
     },
     sendResults() {
-      if(!this.winner || !this.punkte){
-        // todo Fehlermeldung
-        return;
-      }
-      // todo loading animation here
       this.loading = true;
       // sanitze data
       this.players.forEach(player => {
@@ -286,6 +299,14 @@ export default {
 #btn-wrapper {
   display: flex;
   flex-direction: column;
+}
+#entry-error{
+  margin: 5px;
+  color: $dangerColorDark;
+  text-align: center;
+}
+#entry-error.active{
+  border: 1px solid $dangerColor;
 }
 
 #more-info-btn {
