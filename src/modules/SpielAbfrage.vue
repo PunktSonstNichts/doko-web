@@ -16,7 +16,7 @@
     </div>
   </div>
   <div id="abort" @click="progressSelection(null)">
-    Keiner hatte {{ereignis}} (weiter)
+    Niemand hatte {{ereignis}} (weiter)
   </div>
 </div>
 </template>

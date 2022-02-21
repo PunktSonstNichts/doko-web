@@ -1,7 +1,5 @@
 <template>
-  <div v-if="loading">
-    Lade...
-  </div>
+  <Loading v-if="loading"/>
   <div id="game" v-else-if="gameFound">
     <div id="overview">
       <div v-for="player in spieler" :key="player.id" class="player">
@@ -26,7 +24,6 @@
         <div id="punkte-wrapper">
           <span id="punkte-header">P</span>
         </div>
-        <div class="player-points"></div>
         <div v-for="(runde, index) in runden" :key="runde.punkte + '-' +index">
           <div class="player-points">
             <span>{{runde.punkte}}</span>
@@ -50,8 +47,10 @@
 
 <script>
 import axios from "axios";
+import Loading from "@/modules/Loading";
 export default {
   name: "Game",
+  components: {Loading},
   computed: {
     gameID () {
       return this.$route.params.id
@@ -71,7 +70,11 @@ export default {
       this.spieler = result.data.spieler;
       this.runden = result.data.runden;
       this.gameFound = true;
-    }).catch(error => console.error(error));
+    }).catch(error => {
+      console.error(error);
+      this.loading = false;
+      this.gameFound = false;
+    });
   },
   data(){
     return {
@@ -119,6 +122,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 .player-wrapper, .player-points{
   display: inline-block;
 }
@@ -130,6 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 60px;
+  margin-bottom: 12px;
 }
 .player-wrapper.kommt_raus{
   background: $accentColor;
@@ -179,5 +184,14 @@ export default {
   border-radius: 2px;
   border: 1px solid $secondColorDark;
   font-size: 1.2em;
+}
+#game-not-found {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  padding: 8vmin;
 }
 </style>

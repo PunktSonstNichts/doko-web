@@ -1,7 +1,5 @@
 <template>
-  <div id="loading" v-if="loading">
-    Lade...
-  </div>
+  <Loading v-if="loading" />
   <div id="abfrage" v-else-if="parteiEingabe">
     <span>Zunächst, wer hat zusammengespielt?</span>
     <div id="title-wrapper">
@@ -49,10 +47,11 @@
 <script>
 import SpielAbfrage from "@/modules/SpielAbfrage";
 import axios from "axios";
+import Loading from "@/modules/Loading";
 
 export default {
   name: "Eingabe",
-  components: {SpielAbfrage},
+  components: {Loading, SpielAbfrage},
   computed: {
     gameID() {
       return this.$route.params.id
