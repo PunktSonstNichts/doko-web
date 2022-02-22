@@ -94,10 +94,12 @@ axios.interceptors.response.use(
 
           case 401:
           case 403:
-            router.replace({
-              path: "/login",
-              query: { redirect: router.currentRoute.fullPath }
-            });
+            if(router.currentRoute.name !== "Login"){
+              router.replace({
+                path: "/login",
+                query: { redirect: router.currentRoute.fullPath }
+              });
+            }
             break;
           case 404:
             alert('page not exist');

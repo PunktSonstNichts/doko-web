@@ -11,7 +11,7 @@
 export default {
   name: 'App',
   created() {
-    if(!localStorage.getItem("access_token")){
+    if(!localStorage.getItem("access_token") && this.$route.name !== "Login"){
       console.error(localStorage.getItem("access_token"));
       this.$router.replace({
         path: "/login",
