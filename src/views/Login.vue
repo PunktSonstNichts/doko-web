@@ -61,7 +61,7 @@ export default {
   margin: 5px;
   color: $dangerColorDark;
   text-align: center;
-  border: 1px solid;
+  border: 1px transparent;
 }
 #entry-error.active{
   border: 1px solid $dangerColor;

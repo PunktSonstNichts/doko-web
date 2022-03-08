@@ -1,23 +1,23 @@
 <template>
   <div id="create-game">
     <h1>neues Spiel starten</h1>
-    <TextInput autocomplete="false" type="text" placeholder="Spieler 1" v-model="players.player1" />
-    <TextInput autocomplete="false" type="text" placeholder="Spieler 2" v-model="players.player2"/>
-    <TextInput autocomplete="false" type="text" placeholder="Spieler 3" v-model="players.player3"/>
-    <TextInput autocomplete="false" type="text" placeholder="Spieler 4" v-model="players.player4"/>
-    <TextInput autocomplete="false" type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
-    <div id="entry-error" :class="errorMsg ? 'active' : ''"> {{errorMsg}} </div>
+    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 1" v-model="players.player1" />
+    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 2" v-model="players.player2"/>
+    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 3" v-model="players.player3"/>
+    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 4" v-model="players.player4"/>
+    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
+    <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
     <button id="create-game-btn" @click="createRound()">Spiel starten!</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import TextInput from "@/modules/TextInput";
+import PlayerSearch from "@/modules/PlayerSearch"
 
 export default {
   name: 'HelloWorld',
-  components: {TextInput},
+  components: {PlayerSearch},
   props: {
     msg: String
   },
@@ -83,7 +83,7 @@ a {
   margin: 5px;
   color: $dangerColorDark;
   text-align: center;
-  border: 1px solid;
+  border: 1px transparent;
 }
 #entry-error.active{
   border: 1px solid $dangerColor;

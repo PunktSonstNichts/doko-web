@@ -32,7 +32,7 @@
       <input type="number" v-model="punkte"/>
     </div>
     <div id="btn-wrapper">
-      <div id="entry-error" :class="errorMsg ? 'active' : ''"> {{errorMsg}} </div>
+      <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
       <button @click="skipDetailedEntry()">Zurück zum Spiel</button>
       <button @click="enterDetailedEntry()" id="more-info-btn">Weitere Infos eingeben</button>
     </div>
@@ -304,7 +304,7 @@ export default {
   margin: 5px;
   color: $dangerColorDark;
   text-align: center;
-  border: 1px solid;
+  border: 1px transparent;
 }
 #entry-error.active{
   border: 1px solid $dangerColor;

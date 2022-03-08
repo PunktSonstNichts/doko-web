@@ -5,7 +5,7 @@
         class="input_input"
         id="input"
         v-model="input"
-        @change="handleChange"
+        @keyup="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
     >
@@ -35,6 +35,11 @@ export default {
         underline: false
       },
       input: this.value
+    }
+  },
+  created() {
+    if(this.input){
+      this.inputWrapperCssClasses.focused = true;
     }
   },
   methods: {
