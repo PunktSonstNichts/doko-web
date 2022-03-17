@@ -7,6 +7,7 @@
 
 <script>
 export default {
+  // eslint-disable-next-line
   name: "Loading",
   // todo get Player names as prop in order to include their name to the textes as well
   created() {

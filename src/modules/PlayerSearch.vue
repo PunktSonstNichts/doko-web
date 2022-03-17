@@ -4,12 +4,15 @@
         v-bind="$attrs" v-model="textInput" @change="checkForPlayers"/>
     <div id="floaty-piece" v-if="textInput">
       <div id="add-player-wrapper">
-        <button id="add-player-btn" @click="createPlayer()">{{textInput}} hinzufügen</button>
+        <button id="add-player-btn" @click="createPlayer()" v-if="canAddPlayer">{{textInput}} hinzufügen</button>
       </div>
       <div id="result-box">
         <div v-for="player in result" :key="player.id" :class="['player-wrapper', selectedPlayer === player ? 'selected' : '']" @click="selectPlayer(player)">
           <span class="player-name">{{player.username}}</span>
         </div>
+      </div>
+      <div id="error-box">
+        {{ errorMsg }}
       </div>
     </div>
   </div>
@@ -26,13 +29,21 @@ import TextInput from "@/modules/TextInput";
 export default {
   name: "PlayerSearch.vue",
   components: {TextInput},
+  computed: {
+    canAddPlayer(){
+      if(this.textInput.length >= 3 && this.result.length === 0 && !this.errorMsg){
+        return true;
+      }
+      return false;
+    }
+  },
   data(){
     return {
       textInput: null,
       loading: false,
       errorMsg: null,
       result: [],
-      selectedPlayer: null
+      selectedPlayer: null,
     }
   },
   watch: {
@@ -43,14 +54,17 @@ export default {
   },
   methods: {
     checkForPlayers(){
-      axios.get(`${this.$hostname}/namelist/${this.textInput}`).then(response => {
-        this.loading = false;
-        this.result = response.data.player;
-        console.log(response);
-      }).catch(error => {
-        console.error(error);
-        this.errorMsg = error.data.msg;
-      });
+      if(this.textInput){
+        this.errorMsg = null;
+        axios.get(`${this.$hostname}/namelist/${this.textInput}`).then(response => {
+          this.loading = false;
+          this.result = response.data.player;
+          console.log(response);
+        }).catch(error => {
+          console.error(error);
+          this.errorMsg = error.data.msg;
+        });
+      }
     },
     selectPlayer(player){
       this.$emit("input", player);

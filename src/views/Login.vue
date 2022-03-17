@@ -12,7 +12,8 @@ import axios from "axios";
 import TextInput from "@/modules/TextInput";
 
 export default {
-  name: "Login.vue",
+  // eslint-disable-next-line
+  name: "Login",
   components: {TextInput},
   data(){
     return {

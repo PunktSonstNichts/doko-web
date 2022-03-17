@@ -1,26 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-
-// Import Bootstrap an BootstrapVue CSS files (order is important)
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-// Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue)
-// Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
-
-
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 // http://192.168.0.158:5000/
-Vue.prototype.$hostname = 'http://localhost:5000'
+console.log(process.env, process.env.VUE_APP_BACKEND_URL);
+Vue.prototype.$hostname = process.env.VUE_APP_BACKEND_URL;
 
 
 import NewGame from "@/views/NewGame"
@@ -52,7 +40,6 @@ const router = new VueRouter({
       name: "game",
       component: Game
     },
-
     {
       path: "/game/:id/entry",
       name: "Eingabe",

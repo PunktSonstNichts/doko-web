@@ -51,6 +51,7 @@ import axios from "axios";
 import Loading from "@/modules/Loading";
 
 export default {
+  // eslint-disable-next-line
   name: "Eingabe",
   components: {Loading, SpielAbfrage},
   computed: {

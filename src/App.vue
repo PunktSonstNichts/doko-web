@@ -32,6 +32,7 @@ body, html{
 }
 #app {
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 

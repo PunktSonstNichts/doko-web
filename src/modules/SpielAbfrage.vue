@@ -108,7 +108,7 @@ export default {
 }
 
 #player-wrapper{
-  margin: 8px 16px;
+  margin: 12px 16px;
   display: flex;
   border-top: 1px solid $secondColorDark;
   border-bottom: 1px solid $secondColorDark;
@@ -132,7 +132,12 @@ export default {
   text-decoration: line-through;
 }
 #abort{
+  margin: 12px 16px;
+  padding: 12px 14px;
   text-align: center;
-  padding: 6px;
+  font-size: 1.2em;
+  color: $secondColor;
+  border-radius: 2px;
+  border: 1px solid $secondColorDark;
 }
 </style>
