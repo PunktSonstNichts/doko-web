@@ -53,6 +53,7 @@
 import axios from "axios";
 import Loading from "@/modules/Loading";
 export default {
+  // eslint-disable-next-line
   name: "Game",
   components: {Loading},
   computed: {
