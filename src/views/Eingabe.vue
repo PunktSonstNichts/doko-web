@@ -20,7 +20,7 @@
   </div>
   <div id="punkte-abfrage" v-else-if="punkteEingabe">
     <div id="winner-partei-wrapper">
-      Wer hat gewonnen?
+      <span class="question">Wer hat gewonnen?</span>
       <div id="winner-partei-selection">
         <label><input type="radio" v-model="winner" value="Re"/><span>Re</span></label>
         <label><input type="radio" v-model="winner" value="Kontra"/><span>Kontra</span></label>
@@ -28,8 +28,15 @@
       <span>{{ winningPlayersString }} </span>
     </div>
     <div id="punkte-wrapper">
-      Und wieviele Punkte?
+      <span class="question">Und wieviele Punkte?</span>
       <input type="number" v-model="punkte"/>
+    </div>
+    <div id="bock-wrapper">
+      <span class="question">Gab es Bock?</span>
+      <label>
+        <input type="checkbox" v-model="bock"/>
+        bockt!
+      </label>
     </div>
     <div id="btn-wrapper">
       <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
@@ -94,6 +101,7 @@ export default {
       current_ereignis_index: 0,
       firstPlayer: null,
       punkte: null,
+      bock: false,
       winner: null,
       players: []
     }
@@ -198,7 +206,8 @@ export default {
       const requestBody = {
         "spielerArray": requestPlayerBody,
         "punkte": this.punkte * 1, // *1 is used to convert string to int
-        "solo": this.solo
+        "solo": this.solo,
+        "bock": this.bock
       }
       axios.post(`${this.$hostname}/game/${this.gameID}`, requestBody).then(data => {
         this.loading = false; // useless but whatever
@@ -261,7 +270,7 @@ export default {
   height: 100%;
 }
 
-#winner-partei-wrapper, #punkte-wrapper {
+#winner-partei-wrapper, #punkte-wrapper, #bock-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -270,7 +279,7 @@ export default {
   flex: 1;
 }
 
-#winner-partei-wrapper > *, #punkte-wrapper > * {
+#winner-partei-wrapper > *, #punkte-wrapper > *, bock-wrapper > * {
   margin: 6px 0;
 }
 
