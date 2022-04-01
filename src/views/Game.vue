@@ -1,46 +1,50 @@
 <template>
   <Loading v-if="loading"/>
   <div id="game" v-else-if="gameFound">
-    <div id="overview">
-      <div v-for="player in spieler" :key="player.id" class="player">
-        <div v-if="isKonsumView" class="player-konsum">
-          {{ player.name }} hat schon X Bier getrunken.
-        </div>
-        <div class="player-wrapper kommt_raus" v-if="player.kommt_raus">
-          <span class="player-name">{{ player.name }}</span>
-          <span class="player-info">kommt raus</span>
-        </div>
-        <div class="player-wrapper aussetzen" v-else-if="player.aussetzen">
-          <span class="player-name">{{ player.name }}</span>
-          <span class="player-info">setzt aus</span>
-        </div>
-        <div class="player-wrapper" v-else>
-          <span class="player-name">{{ player.name }}</span>
-        </div>
-        <div v-if="!isKonsumView">
-          <div v-for="(runde, index) in pointsForPlayer(player.id)" :key="player.id + '.' + index + '.' + punkte">
-            <div class="player-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
-            <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
-          </div>
-        </div>
-      </div>
-      <div id="overview-punkte" v-if="!isKonsumView">
-        <div id="punkte-wrapper">
-          <span id="punkte-header">P</span>
-        </div>
-        <div v-for="(runde, index) in runden" :key="runde.punkte + '-' +index">
-          <div class="player-points">
-            <span>{{runde.punkte}}</span>
-            <span v-if="runde.solo">
-              Solo
-            </span>
-            <!-- #todo hier kommen dann Solo und BockRunden rein-->
-          </div>
-          <div class="divider" v-if="index % spieler.length === spieler.length - 1"></div>
-        </div>
-      </div>
+    <div id="konsum">
+      <button id="konsum-btn" @click="toggleKonsumModal()">{{isKonsumView ? "Zurück zum Spiel" : "Konsum eintragen"}}</button>
     </div>
-    <router-link :to="`/game/${gameID}/entry`" tag="button" id="enter-results-btn">Ergebnisse eintragen</router-link>
+    <div v-if="isKonsumView" id="konsum-overview">
+      <div class="konsum-element">1 Bier</div>
+      <div class="konsum-element">1 Wein</div>
+    </div>
+    <table id="overview">
+        <thead id="overview-header">
+        <tr>
+          <th v-for="player in spieler" :key="player.id">
+            <button v-if="isKonsumView" class="player-konsum">
+              +
+            </button>
+            <div class="player-wrapper" :class="getHeaderInfo(player).class">
+              <span class="player-name">{{ player.name }}</span>
+              <span class="player-info" v-if="getHeaderInfo(player).text">{{ getHeaderInfo(player).text }}</span>
+            </div>
+          </th>
+          <th id="punkte-wrapper" v-if="!isKonsumView">
+            <span id="punkte-header">P</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody id="overview-punkte" v-if="!isKonsumView">
+          <tr v-for="(runde, index) in runden" :key="runde.id" :class="{row: true, divider: index % spieler.length === spieler.length - 1}">
+            <td v-for="(player, index) in pointsPerRound(runde)" :key="player.id + '.' + index + '.' + runde.punkte">
+              <div class="player-points">{{ player.punkte }} <span v-if="player.solo">S</span></div>
+            </td>
+            <td class="punkte-per-round">
+              <div class="runden-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
+            </td>
+          </tr>
+        <tr id="footer-row">
+          <td colspan="4"></td>
+          <td>
+            Noch 4 Bockrunden
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    <div id="interaction-wrapper">
+      <router-link :to="`/game/${gameID}/entry`" tag="button" id="enter-results-btn">Ergebnisse eintragen</router-link>
+    </div>
   </div>
   <div v-else id="game-not-found">
     <span v-if="gameID">Kein Spiel unter <i>{{gameID}}</i> gefunden.</span>
@@ -91,22 +95,31 @@ export default {
     }
   },
   methods: {
-    pointsForPlayer(playerId){
+    pointsPerRound(runde){
       let result = [];
-      this.runden.forEach(runde => {
-        const player = runde.spielerArray.find(player => player.id === playerId);
-        console.log(player);
+      this.spieler.forEach(spieler => {
+        const player = runde.spielerArray.find(player => player.id === spieler.id);
         if(player){
-          console.log(player.name, player.zwischenstand);
+          console.log(player, player.zwischenstand);
           result.push({punkte: player.zwischenstand, solo: player.id === runde.solo});
         }else{
           result.push({punkte: "-/-"});
         }
       });
+      console.log(result);
       return result;
     },
     toggleKonsumModal(){
       this.isKonsumView = !this.isKonsumView;
+    },
+    getHeaderInfo(player){
+      if(player.kommt_raus){
+        return {class: "kommt_raus", text: "kommt\nraus"};
+      }
+      if(player.aussetzen){
+        return {class: "aussetzen", text: "setzt\naus"};
+      }
+      return {class: null, text: null};
     }
   }
 }
@@ -115,34 +128,75 @@ export default {
 <style scoped lang="scss">
 @import "@/css/colors.scss";
 
-#game{
+#konsum{
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  background: $dangerColorDark;
 }
-#overview{
+#konsum-btn{
   flex: 1;
-  display: flex;
-  overflow-y: scroll;
+  background: $background;
+  color: $secondColor;
+  box-shadow: 0 1px 2px $secondColorDark;
+  margin: 5px;
+  border-radius: 2px;
+  border: 1px solid $secondColorDark;
+  font-size: 1.2em;
+  box-sizing: border-box;
 }
-.player, #overview-punkte{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.konsum-element{
+  margin: 12px;
+  padding: 6px;
+  border: 5px solid $background;
+  background: $secondColor;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: $secondColorText;
+}
+.konsum-element:hover{
+  border-color: $dangerColorDark;
+  background: $secondColorDark;
+  color: $dangerColor;
 }
 
-.player-wrapper, .player-points{
-  display: inline-block;
+.player-konsum{
+  margin: 4px 6px;
+  text-align: center;
+}
+
+#game{
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+/** Table **/
+table#overview {
+  width: 100%;
+  border-collapse: collapse;
+}
+table#overview td, table#overview th {
+  padding: 0;
+  margin: 0;
+}
+table#overview th {
+  position: sticky;
+  top: 0;
 }
 .player-wrapper, #punkte-wrapper{
   padding: 7px;
   text-align: center;
   background: $secondColor;
   border-bottom: 1px solid $secondColorDark;
-  display: flex;
-  flex-direction: column;
   height: 60px;
+}
+#punkte-wrapper{
   margin-bottom: 12px;
+  width: 64px;
+}
+
+.player-wrapper{
+display: flex;
+flex-direction: column;
+justify-content: center;
 }
 .player-wrapper.kommt_raus{
   background: $accentColor;
@@ -161,31 +215,42 @@ export default {
 .player-wrapper.aussetzen > .player-name{
   color: $dangerColorText;
 }
-.player-name, #punkte-header{
+.player-info {
+  line-height: 0.8em;
+  margin-bottom: -6px;
+}
+
+.player-name, #punkte-header {
   font-size: 1.2rem;
   color: $secondColorText;
 }
-.player-info{
-  line-height: 0.7rem;
-  margin-top: -2px;
-}
-.player:not(:last-of-type){
-  border-right: 1px solid $secondColorDark;
-}
-#overview-punkte{
-  border-left: 1px solid $secondColorDark;
-}
-.player-points{
-  padding: 7px;
-  width: 100%;
+.player-points, .runden-points{
+  padding: 12px 16px;
   text-align: center;
 }
-.divider{
-  background: $secondColorDark;
-  height: 1px;
+.player-points{
+  border-right: 1px solid $secondColor;
+}
+tr.row.divider {
+  border-bottom: 1px solid $secondColor;
+}
+#footer-row{
+  height: 96px;
+  vertical-align: top;
+}
+
+
+
+/** Interaction **/
+#interaction-wrapper{
+  position: fixed;
+  bottom: 0;
   width: 100%;
+  background: linear-gradient(0deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0) 69%);
+  display: flex;
 }
 #enter-results-btn{
+  flex: 1;
   background: $secondColor;
   color: $secondColorText;
   margin: 5px;
