@@ -1,7 +1,7 @@
 <template>
   <div id="login-wrapper">
     <TextInput autocomplete="false" type="text" placeholder="Name" v-model="login.username"/>
-    <TextInput autocomplete="false" type="password" placeholder="Passwort" v-model="login.password"/>
+    <TextInput autocomplete="false" type="password" placeholder="Passwort" v-model="login.password" v-on:keyup.enter="handleLoginClick"/>
     <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
     <button id="login-btn" @click="handleLoginClick">anmelden</button>
   </div>

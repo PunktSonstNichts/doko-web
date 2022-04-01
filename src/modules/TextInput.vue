@@ -9,6 +9,7 @@
         @keyup="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
+        v-on="$listeners"
     >
     <label class="input_label" for="input">{{ placeholder }}</label>
     <span class="input_focusline"></span>
