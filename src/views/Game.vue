@@ -37,7 +37,7 @@
         <tr id="footer-row">
           <td colspan="4"></td>
           <td>
-            Noch 4 Bockrunden
+            <!-- #todo make it real <span>Noch 4 Bockrunden</span> -->
           </td>
         </tr>
         </tbody>
