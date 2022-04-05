@@ -29,7 +29,7 @@
     </div>
     <div id="punkte-wrapper">
       <span class="question">Und wieviele Punkte?</span>
-      <input type="number" v-model="punkte"/>
+      <input type="number" v-model="punkte"/><ShowBock :bock-count="bockCountForRound"></ShowBock>
     </div>
     <div id="bock-wrapper">
       <span class="question">Gab es Bock?</span>
@@ -56,11 +56,12 @@
 import SpielAbfrage from "@/modules/SpielAbfrage";
 import axios from "axios";
 import Loading from "@/modules/Loading";
+import ShowBock from "@/modules/ShowBock";
 
 export default {
   // eslint-disable-next-line
   name: "Eingabe",
-  components: {Loading, SpielAbfrage},
+  components: {ShowBock, Loading, SpielAbfrage},
   computed: {
     gameID() {
       return this.$route.params.id
@@ -89,8 +90,10 @@ export default {
   },
   created() {
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
+      console.log(result);
       this.loading = false;
       this.players = result.data.spieler.filter(spieler => !spieler.aussetzen);
+      this.bockCountForRound = result.data.remainingBock[0] || 0;
     }).catch(error => console.error(error));
   },
   data() {
@@ -102,6 +105,7 @@ export default {
       firstPlayer: null,
       punkte: null,
       bock: false,
+      bockCountForRound: 0,
       winner: null,
       players: []
     }
