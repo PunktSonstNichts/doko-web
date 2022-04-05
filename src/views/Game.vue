@@ -31,14 +31,19 @@
               <div class="player-points">{{ player.punkte }} <span v-if="player.solo">S</span></div>
             </td>
             <td class="punkte-per-round">
-              <div class="runden-points">{{ runde.punkte }} <span v-if="runde.solo">S</span></div>
+              <div class="runden-points">{{ runde.punkte }} <span v-if="runde.solo">S</span><ShowBock :bock-count="runde.bock"/></div>
             </td>
           </tr>
-        <tr id="footer-row">
-          <td colspan="4"></td>
-          <td>
-            <!-- #todo make it real <span>Noch 4 Bockrunden</span> -->
+        <tr v-for="(bockCount, index) in remainingBock" :key="index" :class="{row: true, divider: (runden.length + index) % spieler.length === spieler.length - 1}">
+          <td :colspan="spieler.length">
+            <div class="player-points">&nbsp;</div>
           </td>
+          <td>
+            <ShowBock :bock-count="bockCount" class="runden-points"/>
+          </td>
+        </tr>
+        <tr id="footer-row">
+          <td :colspan="spieler.length + 1"></td>
         </tr>
         </tbody>
       </table>
@@ -56,10 +61,11 @@
 <script>
 import axios from "axios";
 import Loading from "@/modules/Loading";
+import ShowBock from "@/modules/ShowBock";
 export default {
   // eslint-disable-next-line
   name: "Game",
-  components: {Loading},
+  components: {ShowBock, Loading},
   computed: {
     gameID () {
       return this.$route.params.id
@@ -78,6 +84,7 @@ export default {
       console.log(result);
       this.spieler = result.data.spieler;
       this.runden = result.data.runden;
+      this.remainingBock = result.data.remainingBock;
       this.gameFound = true;
     }).catch(error => {
       console.error(error);
@@ -90,6 +97,7 @@ export default {
       loading: true,
       spieler: [],
       runden: [],
+      remainingBock: [],
       isKonsumView: false,
       gameFound: false
     }
