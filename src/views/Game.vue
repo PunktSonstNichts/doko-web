@@ -1,9 +1,9 @@
 <template>
   <Loading v-if="loading"/>
   <div id="game" v-else-if="gameFound">
-    <div id="konsum">
+    <!-- <div id="konsum">
       <button id="konsum-btn" @click="toggleKonsumModal()">{{isKonsumView ? "Zurück zum Spiel" : "Konsum eintragen"}}</button>
-    </div>
+    </div>  -->
     <div v-if="isKonsumView" id="konsum-overview">
       <div class="konsum-element">1 Bier</div>
       <div class="konsum-element">1 Wein</div>
