@@ -198,7 +198,7 @@ table#overview th {
 }
 #punkte-wrapper{
   margin-bottom: 12px;
-  width: 64px;
+  width: 80px;
 }
 
 .player-wrapper{

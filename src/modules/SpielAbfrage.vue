@@ -10,7 +10,7 @@
   <div id="player-wrapper">
     <div v-for="player in players"
          :key="player.id"
-         :class="['player-selection', player.aussetzen ? 'player-disabled' : '']"
+         :class="{'player-selection': true, 'player-disabled': !!player.disabled, 'selected-player': playerId === player.id}"
          @click="progressSelection(player)">
         {{player.name}}
     </div>
@@ -34,31 +34,24 @@ export default {
     // ereignis can be Hochzeit, Armut or Schweine
     ereignis: {
       type: String,
+    },
+    playerId: {
+      type: Number,
     }
   },
   created() {
     // disable Hochzeit entry for Kontra-Pertei members
     if(this.ereignis === "Hochzeit"){
       this.players.forEach(player => {
+        console.log(this.playerId, player.id, this.playerId === player.id);
         if(player.partei !== "Re"){
-          player.aussetzen = true;
+          player.disabled = true;
         }
       });
-    }
-  },
-  watch: {
-    ereignis(){
-      if(this.ereignis === "Hochzeit"){
-        this.players.forEach(player => {
-          if(player.partei !== "Re"){
-            player.aussetzen = true;
-          }
-        });
-      }else{
-        this.players.forEach(player => {
-          player.aussetzen = false
-        });
-      }
+    }else{
+      this.players.forEach(player => {
+        player.disabled = false
+      });
     }
   },
   methods: {
@@ -66,7 +59,7 @@ export default {
         if(player == null){
           this.$emit("eingabe", null);
         } else {
-          if(!player.aussetzen){
+          if(!player.disabled){
             this.$emit("eingabe", player.id);
           }
         }

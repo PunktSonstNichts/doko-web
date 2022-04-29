@@ -14,7 +14,7 @@
         {{ player.name }}
       </div>
     </div>
-    <div v-if="firstPlayer" @click="processSelection(null)">
+    <div v-if="firstPlayer" @click="processSelection(null)" id="solo-btn">
       {{ firstPlayer ? firstPlayer.name : '' }} hat Solo gespielt
     </div>
   </div>
@@ -38,16 +38,24 @@
         bockt!
       </label>
     </div>
+    <div id="ereignis-wrapper">
+      <div v-for="(x, ereignis) in ereignisse" :key="ereignis + x" @click="current_ereignis = ereignis" class="ereignis">
+        <img class="ereignis-icon" width="42px" height="42px" :src="getImgUrl(ereignis)"/>
+        <span>{{ereignis}}</span>
+        <div>{{idToName(x)}}</div>
+      </div>
+    </div>
     <div id="btn-wrapper">
       <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
-      <button @click="skipDetailedEntry()">Zurück zum Spiel</button>
-      <button @click="enterDetailedEntry()" id="more-info-btn">Weitere Infos eingeben</button>
+      <router-link :to="`/game/${gameID}`" tag="button">abbrechen</router-link>
+      <button @click="checkAndSend()" id="more-info-btn">speichern & zurück zum Spiel</button>
     </div>
   </div>
   <spiel-abfrage
       v-else
       :players="players"
-      :ereignis="ereignis"
+      :ereignis="current_ereignis"
+      :player-id="whichPlayerHas(current_ereignis)"
       @eingabe="processEingabe"
   />
 </template>
@@ -66,14 +74,11 @@ export default {
     gameID() {
       return this.$route.params.id
     },
-    ereignis() {
-      return this.ereignisse[this.current_ereignis_index];
-    },
     parteiEingabe() {
-      return this.current_ereignis_index === 0;
+      return this.current_ereignis === "Partei";
     },
     punkteEingabe() {
-      return this.current_ereignis_index === 1;
+      return this.current_ereignis === "Punkte";
     },
     solo() {
       const winnerArray = this.players.filter(player => player.partei === this.winner);
@@ -100,8 +105,12 @@ export default {
     return {
       loading: true,
       errorMsg: null,
-      ereignisse: ["Partei", "Punkte", "Hochzeit", "Schweine", "Armut"],
-      current_ereignis_index: 0,
+      ereignisse: {
+          "Hochzeit": null,
+          "Schweine": null,
+          "Armut": null,
+      },
+      current_ereignis: "Partei",
       firstPlayer: null,
       punkte: null,
       bock: false,
@@ -111,6 +120,17 @@ export default {
     }
   },
   methods: {
+    getImgUrl(ereignis) {
+      var images = require.context('../assets/', false, /\.png$/)
+      return images('./' + ereignis + "_Icon.png")
+    },
+    whichPlayerHas(ereignis){
+      // returns null or playerId
+      return this.ereignisse[ereignis];
+    },
+    idToName(playerId){
+      return this.players.find(player => player.id === playerId)?.name;
+    },
     processSelection(player) {
       // one player if he/she played a solo or two players for RE-Partei
       if (this.firstPlayer) {
@@ -130,20 +150,12 @@ export default {
       }
     },
     processEingabe(playerID) {
-      //put the eingabe to the player
-      if (playerID) {
-        const ereignis = this.ereignisse[this.current_ereignis_index].toLowerCase();
-        this.players.find(player => player.id === playerID)[ereignis] = true;
-      }
+      this.ereignisse[this.current_ereignis] = playerID;
 
-      // check for next ereignis
-      this.current_ereignis_index++;
-      if (this.current_ereignis_index >= this.ereignisse.length) {
-        this.sendResults();
-      }
+      // go back to "Punkte"-page
+      this.current_ereignis = "Punkte";
     },
     processRe(playerIDarray) {
-      this.current_ereignis_index++;
 
       this.players.forEach(player => {
         if (playerIDarray.includes(player.id)) {
@@ -160,7 +172,7 @@ export default {
           player.multiplicator = 1;
         }
       });
-      console.log(playerIDarray)
+      this.current_ereignis = "Punkte";
     },
     processPunkte() {
       this.players.forEach(player => {
@@ -172,13 +184,7 @@ export default {
         }
       });
     },
-    enterDetailedEntry() {
-      if(this.checkInput()){
-        this.processPunkte();
-        this.current_ereignis_index++;
-      }
-    },
-    skipDetailedEntry() {
+    checkAndSend() {
       if(this.checkInput()){
         this.processPunkte();
         this.sendResults();
@@ -211,7 +217,10 @@ export default {
         "spielerArray": requestPlayerBody,
         "punkte": this.punkte * 1, // *1 is used to convert string to int
         "solo": this.solo,
-        "bock": this.bock
+        "bock": this.bock,
+        "hochzeit": this.ereignisse.hochzeit,
+        "schweine": this.ereignisse.schweine,
+        "armut": this.ereignisse.armut,
       }
       axios.post(`${this.$hostname}/game/${this.gameID}`, requestBody).then(data => {
         this.loading = false; // useless but whatever
@@ -262,7 +271,15 @@ export default {
   background: $secondColor;
   color: $secondColorText;
 }
-
+#solo-btn{
+  margin: 12px 16px;
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 1.2em;
+  color: $secondColor;
+  border-radius: 2px;
+  border: 1px solid $secondColorDark;
+}
 #abort {
   text-align: center;
   padding: 6px;
@@ -274,7 +291,7 @@ export default {
   height: 100%;
 }
 
-#winner-partei-wrapper, #punkte-wrapper, #bock-wrapper {
+#winner-partei-wrapper, #punkte-wrapper, #bock-wrapper, #ereignis-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -314,6 +331,24 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
+#ereignis-wrapper{
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.ereignis{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 6px;
+  margin: 6px;
+  height: 86px;
+  width: 86px;
+  border-radius: 4px;
+  border: 1px solid $secondColorDark;
+}
+
 #entry-error{
   margin: 5px;
   color: $dangerColorDark;
