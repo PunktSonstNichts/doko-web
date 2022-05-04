@@ -20,8 +20,10 @@
               <span class="player-info" v-if="getHeaderInfo(player).text">{{ getHeaderInfo(player).text }}</span>
             </div>
           </th>
-          <th id="punkte-wrapper" v-if="!isKonsumView">
-            <span id="punkte-header">P</span>
+          <th v-if="!isKonsumView">
+            <div id="punkte-wrapper">
+              <span id="punkte-header">P</span>
+            </div>
           </th>
         </tr>
         </thead>
@@ -190,22 +192,17 @@ table#overview th {
   top: 0;
 }
 .player-wrapper, #punkte-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 7px;
   text-align: center;
   background: $secondColor;
   border-bottom: 1px solid $secondColorDark;
   height: 60px;
 }
-#punkte-wrapper{
-  margin-bottom: 12px;
-  width: 80px;
-}
 
-.player-wrapper{
-display: flex;
-flex-direction: column;
-justify-content: center;
-}
+
 .player-wrapper.kommt_raus{
   background: $accentColor;
   border-bottom: 1px solid $accentColorDark;
