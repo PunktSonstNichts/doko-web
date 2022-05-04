@@ -218,9 +218,9 @@ export default {
         "punkte": this.punkte * 1, // *1 is used to convert string to int
         "solo": this.solo,
         "bock": this.bock,
-        "hochzeit": this.ereignisse.hochzeit,
-        "schweine": this.ereignisse.schweine,
-        "armut": this.ereignisse.armut,
+        "hochzeit": this.ereignisse.Hochzeit,
+        "schweine": this.ereignisse.Schweine,
+        "armut": this.ereignisse.Armut,
       }
       axios.post(`${this.$hostname}/game/${this.gameID}`, requestBody).then(data => {
         this.loading = false; // useless but whatever

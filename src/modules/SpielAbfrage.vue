@@ -16,7 +16,7 @@
     </div>
   </div>
   <div id="abort" @click="progressSelection(null)">
-    Niemand hatte {{ereignis}} (weiter)
+    Niemand hatte {{ereignis}} (zurück)
   </div>
 </div>
 </template>
@@ -40,8 +40,8 @@ export default {
     }
   },
   created() {
-    // disable Hochzeit entry for Kontra-Pertei members
-    if(this.ereignis === "Hochzeit"){
+    // disable Hochzeit or Armut entry for Kontra-Pertei members
+    if(this.ereignis === "Hochzeit" || this.ereignis === "Armut"){
       this.players.forEach(player => {
         console.log(this.playerId, player.id, this.playerId === player.id);
         if(player.partei !== "Re"){
