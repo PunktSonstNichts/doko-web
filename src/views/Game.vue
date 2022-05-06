@@ -50,7 +50,13 @@
         </tbody>
       </table>
     <div id="interaction-wrapper">
-      <router-link :to="`/game/${gameID}/entry`" tag="button" id="enter-results-btn">Ergebnisse eintragen</router-link>
+      <div id="complicated-btn">
+        <button class="interaction-w-confirmation" @click="areYouSure = !areYouSure">
+          {{areYouSure ? 'abbrechen' : 'beenden'}}
+        </button>
+        <button class="are-you-sure-interaction" v-if="areYouSure" @click="lockGame()">Spiel beenden!</button>
+        <router-link :to="`/game/${gameID}/entry`" tag="button" id="enter-results-btn" v-else>Ergebnisse eintragen</router-link>
+      </div>
     </div>
   </div>
   <div v-else id="game-not-found">
@@ -101,6 +107,7 @@ export default {
       runden: [],
       remainingBock: [],
       isKonsumView: false,
+      areYouSure: false,
       gameFound: false
     }
   },
@@ -130,6 +137,16 @@ export default {
         return {class: "aussetzen", text: "setzt\naus"};
       }
       return {class: null, text: null};
+    },
+    lockGame(){
+      this.loading = true;
+      axios.post(`${this.$hostname}/game/${this.gameID}/lock`).then(result => {
+        this.loading = false;
+        console.log(result);
+      }).catch(error => {
+        console.error(error);
+        this.loading = false;
+      });
     }
   }
 }
@@ -254,15 +271,30 @@ tr.row.divider {
   background: linear-gradient(0deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0) 69%);
   display: flex;
 }
-#enter-results-btn{
+#complicated-btn{
   flex: 1;
+  display: flex;
   background: $secondColor;
   color: $secondColorText;
   margin: 5px;
   border-radius: 2px;
   border: 1px solid $secondColorDark;
-  font-size: 1.2em;
 }
+#enter-results-btn, .interaction-w-confirmation, .are-you-sure-interaction{
+  background: transparent;
+  color: $secondColorText;
+  font-size: 1.2em;
+  padding: 6px 8px;
+}
+#enter-results-btn, .are-you-sure-interaction{
+  border-left: 1px solid $secondColorText;
+  flex: 1;
+}
+.are-you-sure-interaction{
+  background: $dangerColorDark;
+  color: $dangerColorText;
+}
+
 #game-not-found {
   height: 100%;
   display: flex;
