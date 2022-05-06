@@ -15,7 +15,9 @@ import NewGame from "@/views/NewGame"
 import Game from "@/views/Game"
 import Eingabe from "@/views/Eingabe";
 import Login from "@/views/Login";
+import User from "@/views/User";
 import axios from "axios";
+import CreateUser from "@/views/CreateUser";
 
 const router = new VueRouter({
   mode: "history",
@@ -29,6 +31,16 @@ const router = new VueRouter({
       path: "/login",
       name: "Login",
       component: Login
+    },
+    {
+      path: "/me",
+      name: "User",
+      component: User
+    },
+    {
+      path: "/create_user/:token",
+      name: "CreateUser",
+      component: CreateUser
     },
     {
       path: "/game/",
