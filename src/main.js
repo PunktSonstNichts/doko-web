@@ -13,6 +13,7 @@ Vue.prototype.$hostname = process.env.VUE_APP_BACKEND_URL;
 
 import NewGame from "@/views/NewGame"
 import Game from "@/views/Game"
+import GameOverview from "@/views/GameOverview"
 import Eingabe from "@/views/Eingabe";
 import Login from "@/views/Login";
 import User from "@/views/User";
@@ -56,6 +57,11 @@ const router = new VueRouter({
       path: "/game/:id/entry",
       name: "Eingabe",
       component: Eingabe
+    },
+    {
+      path: "/game/:id/overview",
+      name: "GameOverview",
+      component: GameOverview
     }
   ]
 });

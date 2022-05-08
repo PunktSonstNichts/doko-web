@@ -1,9 +1,20 @@
 <template>
   <div>
+    <div id="create-game">
+      <router-link to="/game" tag="button" id="new-game-btn">Neues Spiel starten!</router-link>
+    </div>
+    <div id="add-player">
+      <h2>Benutzters hinzufügen</h2>
+      <PlayerSearch autocomplete="off" type="text" placeholder="Spieler zum Hinzufügen auswählen" v-model="playerToAdd" />
+      <button @click="generateToken()">Zugangslink generieren</button>
+      <div v-if="token">
+        <span>{{`${baseUrl}${token}`}}</span>
+      </div>
+    </div>
     <div id="history">
       <h2>gespielte Games</h2>
       <div>
-        <div class="game_overview">
+        <router-link tag="div" to="/game/25" class="game_overview">
           <div class="game_timestamp">Donnerstag, 12. August 2021</div>
           <div class="second_row">
             <span>Till</span>
@@ -11,7 +22,7 @@
             <span>Jannis</span>
             <span>Carl</span>
           </div>
-        </div>
+        </router-link>
         <div class="game_overview">
           <div class="game_timestamp">Mittwoch, 11. August 2021</div>
           <div class="second_row">
@@ -21,14 +32,6 @@
             <span>Alex</span>
           </div>
         </div>
-      </div>
-    </div>
-    <div id="add-player">
-      <h2>Benutzters hinzufügen</h2>
-      <PlayerSearch autocomplete="off" type="text" placeholder="Spieler zum Hinzufügen auswählen" v-model="playerToAdd" />
-      <button @click="generateToken()">Zugangslink generieren</button>
-      <div v-if="token">
-        <span>{{`${baseUrl}${token}`}}</span>
       </div>
     </div>
   </div>
@@ -54,6 +57,10 @@ export default {
   methods: {
     generateToken(){
       console.log(location);
+      if(!this.playerToAdd){
+        alert("kein User ausgewählt");
+        return;
+      }
       axios.get(`${this.$hostname}/get_token`, this.playerToAdd).then(result => {
         //this.loading = false;
         this.token = result.data;

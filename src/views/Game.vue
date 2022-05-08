@@ -89,6 +89,10 @@ export default {
     }
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
       this.loading = false;
+      if(result.data.gesperrt){
+        // Spiel wurde beendet, ab jetzt gibts nurnoch ne Übersicht
+        this.$router.push(`/game/${this.gameID}/overview`);
+      }
       console.log(result);
       this.spieler = result.data.spieler;
       this.runden = result.data.runden;
@@ -142,6 +146,7 @@ export default {
       this.loading = true;
       axios.post(`${this.$hostname}/game/${this.gameID}/lock`).then(result => {
         this.loading = false;
+        this.$router.push(`/game/${this.gameID}/overview`);
         console.log(result);
       }).catch(error => {
         console.error(error);
