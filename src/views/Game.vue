@@ -50,7 +50,7 @@
         </tbody>
       </table>
     <div id="interaction-wrapper">
-      <div id="complicated-btn">
+      <div id="complicated-btn" class="btn">
         <button class="interaction-w-confirmation" @click="areYouSure = !areYouSure">
           {{areYouSure ? 'abbrechen' : 'beenden'}}
         </button>

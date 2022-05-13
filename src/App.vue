@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="header">
-      Online DoppelKopf Tracker
+      <router-link to="/me" tag="span">Online DoppelKopf Tracker</router-link>
     </div>
     <router-view></router-view>
   </div>
@@ -48,6 +48,7 @@ body, html{
   text-align: center;
   color: $mainColorText;
   text-shadow: 1px 1px 2px $secondColorDark;
+  border-bottom: 1px solid $mainColorDark;
   font-weight: bold;
   font-size: 1.2em;
 }
@@ -57,6 +58,17 @@ button {
   background: white;
   padding: 6px 8px;
 }
+.btn {
+  display: flex;
+  justify-content: center;
+  background: $secondColor;
+  color: $secondColorText;
+  margin: 5px;
+  padding: 6px 8px;
+  border-radius: 2px;
+  border: 1px solid $secondColorDark;
+}
+
 label {
   text-align: center;
   padding: 6px 8px;
@@ -64,4 +76,5 @@ label {
 label > input[type=radio]{
 /*  display: none; */
 }
+
 </style>
