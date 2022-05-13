@@ -39,7 +39,7 @@
       </label>
     </div>
     <div id="ereignis-wrapper">
-      <div v-for="(x, ereignis) in ereignisse" :key="ereignis + x" @click="current_ereignis = ereignis" class="ereignis">
+      <div v-for="(x, ereignis) in ereignisse" :key="ereignis + x" :class="['ereignis', isEreignisDisabled(ereignis)]" @click="openEreignis(ereignis)" class="ereignis">
         <img class="ereignis-icon" width="42px" height="42px" :src="getImgUrl(ereignis)"/>
         <span>{{ereignis}}</span>
         <div>{{idToName(x)}}</div>
@@ -124,6 +124,28 @@ export default {
       var images = require.context('../assets/', false, /\.png$/)
       return images('./' + ereignis + "_Icon.png")
     },
+    isEreignisDisabled(ereignis){
+      let res = null;
+      switch (ereignis) {
+        case "Hochzeit":
+          res = this.ereignisse.Armut ? 'disabled' : null;
+          break;
+        case  "Armut":
+          res = this.ereignisse.Hochzeit ? 'disabled' : null;
+          break;
+      }
+      return res;
+    },
+    openEreignis(ereignis){
+      if(!this.isEreignisDisabled(ereignis)){
+        this.current_ereignis = ereignis
+      }else {
+        if(confirm("Sicher, dass Hochzeit und Armut gleichzeitig passiert ist?")){
+          this.current_ereignis = ereignis
+        }
+      }
+    },
+
     whichPlayerHas(ereignis){
       // returns null or playerId
       return this.ereignisse[ereignis];
@@ -347,6 +369,11 @@ export default {
   width: 86px;
   border-radius: 4px;
   border: 1px solid $secondColorDark;
+}
+.ereignis.disabled{
+  border-color: $dangerColorDark;
+  box-shadow: inset 0 0 6px 2px $dangerColor;
+  opacity: 0.69;
 }
 
 #entry-error{
