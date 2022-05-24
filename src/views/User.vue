@@ -5,18 +5,23 @@
     </div>
     <div id="add-player">
       <h2>Benutzters hinzufügen</h2>
-      <PlayerSearch autocomplete="off" type="text" placeholder="Spieler zum Hinzufügen auswählen" v-model="playerToAdd" />
+      <PlayerSearch
+          autocomplete="off"
+          type="text"
+          placeholder="Spieler zum Hinzufügen auswählen"
+          v-model="playerToAdd"
+          :user-has-account="true" />
       <div id="add-player-btn-wrapper">
         <button class="btn" @click="generateToken()">Zugangslink generieren</button>
       </div>
-      <div v-if="token">
-        <span>{{`${baseUrl}${token}`}}</span>
+      <div v-if="token" id="token-url-wrapper">
+        <span id="token-url">{{`${baseUrl}${token}`}}</span>
       </div>
     </div>
     <div id="history">
       <h2>gespielte Games</h2>
       <div>
-        <router-link tag="div" to="/game/25" class="game_overview">
+        <router-link tag="div" to="/game/24" class="game_overview">
           <div class="game_timestamp">Donnerstag, 12. August 2021</div>
           <div class="second_row">
             <span>Till</span>
@@ -59,11 +64,12 @@ export default {
   methods: {
     generateToken(){
       console.log(location);
+      console.log(this.playerToAdd);
       if(!this.playerToAdd){
         alert("kein User ausgewählt");
         return;
       }
-      axios.get(`${this.$hostname}/get_token`, this.playerToAdd).then(result => {
+      axios.get(`${this.$hostname}/get_token?user_id=${this.playerToAdd.user_id}`).then(result => {
         //this.loading = false;
         this.token = result.data;
       });
@@ -76,8 +82,9 @@ export default {
 @import "@/css/colors.scss";
 
 #root-element{
-  background: mix($mainColor, $background, 8%);
-  overflow-y: auto;
+  background: none !important;
+  box-shadow: none !important;
+  min-height: calc(100% - 50px);
 }
 #create-game {
   display: flex;
@@ -111,8 +118,21 @@ h2{
 }
 #add-player-btn-wrapper > button{
   flex: 1;
-
 }
+
+#token-url-wrapper{
+  overflow-x: auto;
+  margin: 6px 8px;
+}
+#token-url{
+  background: darken($background, 20%);
+  border-radius: 2px;
+  padding: 4px 6px;
+  height: 1.2em;
+}
+
+
+
 .game_overview {
   margin: 12px;
   padding: 4px;

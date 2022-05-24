@@ -1,7 +1,6 @@
 <template>
   <div id="input-wrapper" v-if="!selectedPlayer">
-    <TextInput
-        v-bind="$attrs" v-model="textInput" @change="checkForPlayers"/>
+    <TextInput v-bind="$attrs" v-model="textInput"/>
     <div id="floaty-piece" v-if="textInput">
       <div id="add-player-wrapper">
         <button id="add-player-btn" @click="createPlayer()" v-if="canAddPlayer">{{textInput}} hinzufügen</button>
@@ -29,12 +28,19 @@ import TextInput from "@/modules/TextInput";
 export default {
   name: "PlayerSearch.vue",
   components: {TextInput},
+  props: {
+    userHasAccount: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     canAddPlayer(){
-      if(this.textInput.length >= 3 && this.result.length === 0 && !this.errorMsg){
-        return true;
-      }
-      return false;
+      return this.textInput.length >= 3 &&
+          this.result.length === 0 &&
+          !this.errorMsg &&
+          !this.userHasAccount;
+
     }
   },
   data(){
@@ -42,7 +48,8 @@ export default {
       textInput: null,
       loading: false,
       errorMsg: null,
-      result: [],
+      cache: {},
+      result: {},
       selectedPlayer: null,
     }
   },
@@ -54,16 +61,27 @@ export default {
   },
   methods: {
     checkForPlayers(){
-      if(this.textInput){
+      if(this.textInput instanceof InputEvent){
+        console.log("nope")
+        return
+      }
+      // totally weird, textInput is either InputEvent or String
+      const textInput = this.textInput.data || this.textInput;
+      if(textInput){
         this.errorMsg = null;
-        axios.get(`${this.$hostname}/namelist/${this.textInput}`).then(response => {
-          this.loading = false;
-          this.result = response.data.player;
-          console.log(response);
-        }).catch(error => {
-          console.error(error);
-          this.errorMsg = error.data.msg;
-        });
+        if(this.cache[textInput]){
+          this.result = this.cache[textInput]
+        }else{
+          axios.get(`${this.$hostname}/namelist/${textInput}?userHasAccount=${this.userHasAccount}`).then(response => {
+            this.loading = false;
+            this.result = this.cache[textInput] = response.data.player;
+            console.log(response);
+          }).catch(error => {
+            console.error(error);
+            this.errorMsg = error.data.msg;
+          });
+        }
+
       }
     },
     selectPlayer(player){
