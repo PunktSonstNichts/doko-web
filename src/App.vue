@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="header">
-      <router-link to="/me" tag="span">Online DoppelKopf Tracker</router-link>
+      <router-link :is="notLoggedInYet ? 'span' : 'router-link'" to="/me" tag="span">Online DoppelKopf Tracker</router-link>
     </div>
     <router-view></router-view>
   </div>
@@ -10,9 +10,14 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    notLoggedInYet(){
+      return !!(this.$route.name === "Login" || this.$route.name === "CreateUser");
+    }
+  },
   created() {
-    if(!localStorage.getItem("access_token") && this.$route.name !== "Login"){
-      console.error(localStorage.getItem("access_token"));
+    if(!localStorage.getItem("access_token") && !this.notLoggedInYet){
+      console.error(localStorage.getItem("access_token"), this.$route.name);
       this.$router.replace({
         path: "/login",
         query: { redirect: this.$router.currentRoute.fullPath }
@@ -25,6 +30,9 @@ export default {
 <style lang="scss">
 @import "@/css/colors.scss";
 
+* {
+  box-sizing: border-box;
+}
 body, html{
   margin: 0;
   padding: 0;
@@ -40,7 +48,7 @@ body, html{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $secondColor;
-  background: $background;
+  background: mix($background, $mainColor, 92%);
 }
 #header{
   background: $mainColor;
@@ -77,4 +85,33 @@ label > input[type=radio]{
 /*  display: none; */
 }
 
+/* https://stackoverflow.com/questions/6370690/media-queries-how-to-target-desktop-tablet-and-mobile */
+#app > *:not(#header){
+  width: 100%;
+  background: $background;
+  overflow-y: auto;
+}
+/* @media (min-width:320px)  { /* smartphones, iPhone, portrait 480x320 phones / }
+@media (min-width:481px)  { /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. / } */
+@media (min-width:641px)  { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+  #app > *:not(#header){
+    margin: 0 42px;
+    width: calc(100% - 84px);
+    box-shadow: 0 4px 8px rgba($mainColorDark, .5);
+  }
+}
+@media (min-width:961px)  { /* tablet, landscape iPad, lo-res laptops ands desktops */
+  #app > *:not(#header){
+    margin: 0 19vw;
+    width: 62vw;
+  }
+}
+/*
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops / }*/
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+  #app > *:not(#header){
+    margin: 0 auto;
+    width: 960px;
+  }
+}
 </style>

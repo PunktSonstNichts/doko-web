@@ -78,6 +78,7 @@ export default {
 #abfrage{
   display: flex;
   flex-direction: column;
+  min-height: calc(100% - 50px);
 }
 #title-wrapper{
   margin: 16px auto;

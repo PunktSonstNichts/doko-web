@@ -198,7 +198,7 @@ export default {
 #game{
   height: 100%;
   max-height: 100vh;
-  overflow-y: auto;
+  position: relative;
 }
 /** Table **/
 table#overview {
@@ -272,7 +272,7 @@ tr.row.divider {
 #interaction-wrapper{
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: inherit; /* same as parent */
   background: linear-gradient(0deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0) 69%);
   display: flex;
 }
