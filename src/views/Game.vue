@@ -45,7 +45,7 @@
           </td>
         </tr>
         <tr id="footer-row">
-          <td :colspan="spieler.length + 1"></td>
+          <td :colspan="spieler.length + 1"><button @click="undoLastRound()" v-if="runden.length > 0">letzte Runde löschen</button></td>
         </tr>
         </tbody>
       </table>
@@ -152,6 +152,13 @@ export default {
         console.error(error);
         this.loading = false;
       });
+    },
+    undoLastRound(){
+      if(confirm("Letzte Runde wirklich löschen?")){
+        axios.delete(`${this.$hostname}/game/${this.gameID}`).then(result => {
+          this.runden = result.data.runden;
+        });
+      }
     }
   }
 }
