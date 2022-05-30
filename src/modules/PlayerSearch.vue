@@ -1,11 +1,14 @@
 <template>
   <div id="input-wrapper" v-if="!selectedPlayer">
-    <TextInput v-bind="$attrs" v-model="textInput" autocomplete="off"/>
+    <TextInput v-bind="$attrs" v-model="textInput" :autocomplete="doNotAutofill"/>
     <div id="floaty-piece" v-if="textInput">
-      <div id="add-player-wrapper">
-        <button id="add-player-btn" @click="createPlayer()" v-if="canAddPlayer">{{textInput}} hinzufügen</button>
+      <div v-if="exactMatch && filteredResults.length === 0">
+        {{textInput}} gibt's schon.
       </div>
-      <div id="result-box" v-if="filteredResults">
+      <div id="add-player-wrapper" v-else-if="canAddPlayer">
+        <button id="add-player-btn" @click="createPlayer()">{{textInput}} hinzufügen</button>
+      </div>
+      <div id="result-box">
         <button v-for="player in filteredResults"
              :key="player.user_id"
              :class="['player-wrapper', selectedPlayer === player ? 'selected' : '']"
@@ -42,10 +45,20 @@ export default {
     }
   },
   computed: {
+    doNotAutofill(){
+      let result = '';
+      const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const charactersLength = characters.length;
+      for ( var i = 0; i < 16; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+      }
+      return result;
+    },
     canAddPlayer(){
       return this.textInput.length >= 3 &&
-          this.result.length === 0 &&
           !this.errorMsg &&
+          !this.exactMatch &&
           !this.userHasAccount;
 
     }
@@ -55,9 +68,11 @@ export default {
       textInput: null,
       loading: false,
       errorMsg: null,
+      currentSearch: "",
       cache: {},
-      result: {},
+      result: [],
       filteredResults: [],
+      exactMatch: false,
       selectedPlayer: null,
     }
   },
@@ -73,11 +88,26 @@ export default {
   },
   methods: {
     removePlayers(){
+      console.log("remove players");
+      let textInput = "";
+      // totally weird, textInput is either InputEvent or String
+      if(this.textInput instanceof InputEvent){
+        console.log(this.textInput);
+        textInput = this.textInput.target.value;
+      }else{
+        textInput = this.textInput;
+      }
       this.filteredResults = [];
       if(this.result){
-        Object.keys(this.result).forEach(player => {
-         if(!this.ignorePlayers.includes(this.result[player].user_id)){
-            this.filteredResults.push(this.result[player]);
+        this.exactMatch = false;
+        this.result.forEach(player => {
+          console.log(this.ignorePlayers?.map(player => player.username), textInput, this.ignorePlayers?.map(player => player.username).includes(textInput));
+          if(this.ignorePlayers?.map(player => player.username).includes(textInput) || player.username === textInput){
+            this.exactMatch = true;
+            console.log("exact match for", textInput);
+          }
+         if(!this.ignorePlayers?.map(player => player.user_id).includes(player.user_id)){
+            this.filteredResults.push(player);
           }
         });
       }
@@ -86,13 +116,19 @@ export default {
       let textInput = "";
       // totally weird, textInput is either InputEvent or String
       if(this.textInput instanceof InputEvent){
-        textInput = this.textInput.data
+        console.log(this.textInput);
+        textInput = this.textInput.target.value;
       }else{
         textInput = this.textInput;
       }
       if(textInput){
+        let forceSearch = false;
+        if(this.currentSearch.length > textInput.length){
+         forceSearch = true;
+        }
+        this.currentSearch = textInput;
         this.errorMsg = null;
-        if(this.cache[textInput]){
+        if(!forceSearch && this.cache[textInput]){
           this.result = this.cache[textInput]
         }else{
           axios.get(`${this.$hostname}/namelist/${textInput}?userHasAccount=${this.userHasAccount}`).then(response => {

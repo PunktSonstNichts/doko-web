@@ -3,7 +3,6 @@
     <input
         v-bind="$attrs"
         class="input_input"
-        id="input"
         :value="input"
         @input="input = $event.target.value"
         @keyup="handleChange"
@@ -48,8 +47,7 @@ export default {
     }
   },
   methods: {
-    handleChange(event){
-      console.log(event, this.input);
+    handleChange(){
       this.$emit("input", this.input);
     },
     handleFocus(){

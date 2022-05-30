@@ -72,9 +72,7 @@ export default {
       let playerIDArray = [];
       Object.keys(this.players).forEach(player => {
         if(this.players[player]?.user_id){
-
-          console.log(this.players[player], this.players[player]?.user_id);
-          playerIDArray.push(this.players[player]?.user_id)
+          playerIDArray.push(this.players[player])
         }
       });
       console.log(playerIDArray);
