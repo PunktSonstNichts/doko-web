@@ -156,7 +156,9 @@ export default {
     undoLastRound(){
       if(confirm("Letzte Runde wirklich löschen?")){
         axios.delete(`${this.$hostname}/game/${this.gameID}`).then(result => {
+          this.spieler = result.data.spieler;
           this.runden = result.data.runden;
+          this.remainingBock = result.data.remainingBock;
         });
       }
     }
