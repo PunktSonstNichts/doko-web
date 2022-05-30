@@ -4,7 +4,7 @@
         v-bind="$attrs"
         class="input_input"
         id="input"
-        :value="input" 
+        :value="input"
         @input="input = $event.target.value"
         @keyup="handleChange"
         @focus="handleFocus"
@@ -25,7 +25,7 @@ export default {
       default: null,
     },
     value: {
-      type: String,
+      type: [String, InputEvent],
       default: null
     }
   },
@@ -36,16 +36,20 @@ export default {
         focused: false,
         underline: false
       },
-      input: this.value
+      input: ""
     }
   },
   created() {
+    if(this.value && this.value instanceof String){
+      this.input = this.value;
+    }
     if(this.input){
       this.inputWrapperCssClasses.focused = true;
     }
   },
   methods: {
-    handleChange(){
+    handleChange(event){
+      console.log(event, this.input);
       this.$emit("input", this.input);
     },
     handleFocus(){

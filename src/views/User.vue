@@ -15,7 +15,7 @@
         <button class="btn" @click="generateToken()">Zugangslink generieren</button>
       </div>
       <div v-if="token" id="token-url-wrapper">
-        <span id="token-url">{{`${baseUrl}${token}`}}</span>
+        <input id="token-url" :disabled="true" :value="`${baseUrl}${token}`"/>
       </div>
     </div>
     <div id="history">
@@ -128,7 +128,7 @@ h2{
   background: darken($background, 20%);
   border-radius: 2px;
   padding: 4px 6px;
-  height: 1.2em;
+  width: 100%;
 }
 
 

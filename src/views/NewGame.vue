@@ -1,11 +1,38 @@
 <template>
   <div id="create-game">
     <h1>neues Spiel starten</h1>
-    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 1" v-model="players.player1" />
-    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 2" v-model="players.player2"/>
-    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 3" v-model="players.player3"/>
-    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 4" v-model="players.player4"/>
-    <PlayerSearch autocomplete="off" type="text" placeholder="Spieler 5 (optional)" v-model="players.player5"/>
+    <PlayerSearch
+        autocomplete="off"
+        type="text"
+        placeholder="Spieler*in 1"
+        v-model="players.player1"
+        :ignore-players="ignorePlayerIdsArray"/>
+    <span>Spieler*in 1 mischt die Karten</span>
+    <PlayerSearch
+        autocomplete="off"
+        type="text"
+        placeholder="Spieler*in 2"
+        v-model="players.player2"
+        :ignore-players="ignorePlayerIdsArray"/>
+    <span>Spieler*in 2 kommt raus</span>
+    <PlayerSearch
+        autocomplete="off"
+        type="text"
+        placeholder="Spieler*in 3"
+        v-model="players.player3"
+        :ignore-players="ignorePlayerIdsArray"/>
+    <PlayerSearch
+        autocomplete="off"
+        type="text"
+        placeholder="Spieler*in 4"
+        v-model="players.player4"
+        :ignore-players="ignorePlayerIdsArray"/>
+    <PlayerSearch
+        autocomplete="off"
+        type="text"
+        placeholder="Spieler*in 5 (optional)"
+        v-model="players.player5"
+        :ignore-players="ignorePlayerIdsArray"/>
     <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
     <button id="create-game-btn" @click="createRound()">Spiel starten!</button>
   </div>
@@ -21,6 +48,12 @@ export default {
   props: {
     msg: String
   },
+  watch: {
+    players: {
+      deep: true,
+      handler: "ignorePlayerIds"
+    }
+  },
   data() {
     return {
       errorMsg: null,
@@ -30,10 +63,23 @@ export default {
         player3: null,
         player4: null,
         player5: null,
+      },
+      ignorePlayerIdsArray: [],
       }
-    }
   },
   methods: {
+    ignorePlayerIds(){
+      let playerIDArray = [];
+      Object.keys(this.players).forEach(player => {
+        if(this.players[player]?.user_id){
+
+          console.log(this.players[player], this.players[player]?.user_id);
+          playerIDArray.push(this.players[player]?.user_id)
+        }
+      });
+      console.log(playerIDArray);
+      this.ignorePlayerIdsArray=  playerIDArray;
+    },
     createRound() {
       this.errorMsg = null;
       if (this.checkUserInput()) {

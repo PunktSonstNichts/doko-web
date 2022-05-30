@@ -8,16 +8,16 @@
     </span>
   </div>
   <div id="player-wrapper">
-    <div v-for="player in players"
+    <button v-for="player in players"
          :key="player.id"
          :class="{'player-selection': true, 'player-disabled': !!player.disabled, 'selected-player': playerId === player.id}"
          @click="progressSelection(player)">
         {{player.name}}
-    </div>
+    </button>
   </div>
-  <div id="abort" @click="progressSelection(null)">
+  <button id="abort" @click="progressSelection(null)">
     Niemand hatte {{ereignis}} (zurück)
-  </div>
+  </button>
 </div>
 </template>
 

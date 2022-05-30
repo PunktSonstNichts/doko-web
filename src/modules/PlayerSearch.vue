@@ -1,14 +1,17 @@
 <template>
   <div id="input-wrapper" v-if="!selectedPlayer">
-    <TextInput v-bind="$attrs" v-model="textInput"/>
+    <TextInput v-bind="$attrs" v-model="textInput" autocomplete="off"/>
     <div id="floaty-piece" v-if="textInput">
       <div id="add-player-wrapper">
         <button id="add-player-btn" @click="createPlayer()" v-if="canAddPlayer">{{textInput}} hinzufügen</button>
       </div>
-      <div id="result-box">
-        <div v-for="player in result" :key="player.id" :class="['player-wrapper', selectedPlayer === player ? 'selected' : '']" @click="selectPlayer(player)">
+      <div id="result-box" v-if="filteredResults">
+        <button v-for="player in filteredResults"
+             :key="player.user_id"
+             :class="['player-wrapper', selectedPlayer === player ? 'selected' : '']"
+             @click="selectPlayer(player)">
           <span class="player-name">{{player.username}}</span>
-        </div>
+        </button>
       </div>
       <div id="error-box">
         {{ errorMsg }}
@@ -17,7 +20,7 @@
   </div>
   <div id="player-wrapper" v-else>
     <span id="player-name">{{ selectedPlayer.username }}</span>
-    <span id="deselect-player" @click="selectPlayer(null)">X</span>
+    <button id="deselect-player" @click="selectPlayer(null)">X</button>
   </div>
 </template>
 
@@ -32,6 +35,10 @@ export default {
     userHasAccount: {
       type: Boolean,
       default: false
+    },
+    ignorePlayers: {
+      type: Array,
+      default: () => { return [] }
     }
   },
   computed: {
@@ -50,6 +57,7 @@ export default {
       errorMsg: null,
       cache: {},
       result: {},
+      filteredResults: [],
       selectedPlayer: null,
     }
   },
@@ -57,16 +65,31 @@ export default {
     textInput: {
       deep: true,
       handler: "checkForPlayers"
+    },
+    ignorePlayers: {
+      deep: true,
+      handler: "removePlayers"
     }
   },
   methods: {
-    checkForPlayers(){
-      if(this.textInput instanceof InputEvent){
-        console.log("nope")
-        return
+    removePlayers(){
+      this.filteredResults = [];
+      if(this.result){
+        Object.keys(this.result).forEach(player => {
+         if(!this.ignorePlayers.includes(this.result[player].user_id)){
+            this.filteredResults.push(this.result[player]);
+          }
+        });
       }
+    },
+    checkForPlayers(){
+      let textInput = "";
       // totally weird, textInput is either InputEvent or String
-      const textInput = this.textInput.data || this.textInput;
+      if(this.textInput instanceof InputEvent){
+        textInput = this.textInput.data
+      }else{
+        textInput = this.textInput;
+      }
       if(textInput){
         this.errorMsg = null;
         if(this.cache[textInput]){
@@ -75,7 +98,7 @@ export default {
           axios.get(`${this.$hostname}/namelist/${textInput}?userHasAccount=${this.userHasAccount}`).then(response => {
             this.loading = false;
             this.result = this.cache[textInput] = response.data.player;
-            console.log(response);
+            this.removePlayers();
           }).catch(error => {
             console.error(error);
             this.errorMsg = error.data.msg;
@@ -138,6 +161,7 @@ export default {
 }
 #deselect-player {
   position: absolute;
+  padding: 0 !important;
   right: 12px;
   background: $dangerColorText;
   width: 1.2em;

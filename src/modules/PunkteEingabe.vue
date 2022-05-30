@@ -1,0 +1,43 @@
+<template>
+  <div id="input-wrapper">
+    <input type="number" id="punkte-ohne-bock" v-model="punkteOhneBock" @input="calculateBockPunkte()"/>
+    <ShowBock :bock-count="bockCount" v-if="bockCount > 0"/>
+    <input v-if="bockCount > 0" type="number" id="punkte-mit-bock" :value="punkteMitBock" :disabled="true"/>
+  </div>
+</template>
+
+<script>
+import ShowBock from "@/modules/ShowBock";
+export default {
+  name: "PunkteEingabe",
+  components: {ShowBock},
+  props: {
+    bockCount: {
+      type: Number,
+      default: 0,
+    },
+    value: {
+      type: Number,
+      default: null
+    }
+  },
+  data(){
+    return {
+      punkteOhneBock: null,
+      punkteMitBock: null
+    }
+  },
+  methods: {
+    calculateBockPunkte(){
+      this.punkteMitBock = this.punkteOhneBock * Math.pow(2 , this.bockCount);
+      this.$emit("input", this.punkteMitBock);
+    }
+  }
+}
+</script>
+
+<style scoped>
+#input-wrapper{
+  display: flex;
+}
+</style>

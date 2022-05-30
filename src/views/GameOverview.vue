@@ -10,6 +10,7 @@
 
 <script>
 import Loading from "@/modules/Loading";
+import axios from "axios";
 
 export default {
   name: "GameOverview",
@@ -19,6 +20,34 @@ export default {
       return this.$route.params.id
     }
   },
+  created() {
+    if(!this.gameID){
+      console.log("no gameID, no luck")
+      this.loading = false;
+      this.gameFound = false;
+      return;
+    }
+    axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
+      this.loading = false;
+      if(!result.data.gesperrt){
+        this.$router.push(`/game/${this.gameID}`);
+      }
+      console.log(result);
+      this.spieler = result.data.spieler;
+      this.runden = result.data.runden;
+      this.remainingBock = result.data.remainingBock;
+      this.gameFound = true;
+    }).catch(error => {
+      console.error(error);
+      this.loading = false;
+      this.gameFound = false;
+    });
+  },
+  data(){
+    return {
+      loading: false
+    }
+  }
 }
 </script>
 

@@ -14,9 +14,9 @@
         {{ player.name }}
       </div>
     </div>
-    <div v-if="firstPlayer" @click="processSelection(null)" id="solo-btn">
+    <button v-if="firstPlayer" @click="processSelection(null)" id="solo-btn">
       {{ firstPlayer ? firstPlayer.name : '' }} hat Solo gespielt
-    </div>
+    </button>
   </div>
   <div id="punkte-abfrage" v-else-if="punkteEingabe">
     <div id="winner-partei-wrapper">
@@ -29,7 +29,7 @@
     </div>
     <div id="punkte-wrapper">
       <span class="question">Und wieviele Punkte?</span>
-      <input type="number" v-model="punkte"/><ShowBock :bock-count="bockCountForRound"></ShowBock>
+      <PunkteEingabe v-model="punkte" :bock-count="bockCountForRound"></PunkteEingabe>
     </div>
     <div id="bock-wrapper">
       <span class="question">Gab es Bock?</span>
@@ -39,11 +39,14 @@
       </label>
     </div>
     <div id="ereignis-wrapper">
-      <div v-for="(x, ereignis) in ereignisse" :key="ereignis + x" :class="['ereignis', isEreignisDisabled(ereignis)]" @click="openEreignis(ereignis)" class="ereignis">
+      <button v-for="(x, ereignis) in ereignisse"
+           :key="ereignis + x"
+           :class="['ereignis', isEreignisDisabled(ereignis)]"
+           @click="openEreignis(ereignis)">
         <img class="ereignis-icon" width="42px" height="42px" :src="getImgUrl(ereignis)"/>
         <span>{{ereignis}}</span>
         <div>{{idToName(x)}}</div>
-      </div>
+      </button>
     </div>
     <div id="btn-wrapper">
       <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
@@ -64,12 +67,12 @@
 import SpielAbfrage from "@/modules/SpielAbfrage";
 import axios from "axios";
 import Loading from "@/modules/Loading";
-import ShowBock from "@/modules/ShowBock";
+import PunkteEingabe from "@/modules/PunkteEingabe";
 
 export default {
   // eslint-disable-next-line
   name: "Eingabe",
-  components: {ShowBock, Loading, SpielAbfrage},
+  components: { Loading, SpielAbfrage, PunkteEingabe},
   computed: {
     gameID() {
       return this.$route.params.id
@@ -260,6 +263,7 @@ export default {
 #abfrage {
   display: flex;
   flex-direction: column;
+  min-height: calc(100% - 50px);
 }
 
 #title-wrapper {
@@ -392,6 +396,6 @@ export default {
   margin: 5px;
   border-radius: 2px;
   border: 1px solid $secondColorDark;
-  font-size: 1.2em;
+  font-size: 1.44em;
 }
 </style>
