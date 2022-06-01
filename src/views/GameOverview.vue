@@ -3,7 +3,7 @@
     <h1>Übersicht über Spiel #{{ gameID }}</h1>
     <loading v-if="loading"></loading>
     <div v-else>
-
+      <img id="graph" :src="graphUrl" />
     </div>
   </div>
 </template>
@@ -18,6 +18,9 @@ export default {
   computed: {
     gameID () {
       return this.$route.params.id
+    },
+    graphUrl(){
+      return this.$hostname + '/result_plot/' + this.gameID + '.png';
     }
   },
   created() {
@@ -52,5 +55,7 @@ export default {
 </script>
 
 <style scoped>
-
+#graph{
+  max-width: 100%;
+}
 </style>
