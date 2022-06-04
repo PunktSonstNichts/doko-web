@@ -50,7 +50,7 @@
         </tbody>
       </table>
     <div id="interaction-wrapper">
-      <div id="complicated-btn" class="btn">
+      <div id="complicated-btn">
         <button class="interaction-w-confirmation" @click="areYouSure = !areYouSure">
           {{areYouSure ? 'abbrechen' : 'beenden'}}
         </button>
@@ -232,7 +232,13 @@ table#overview th {
   border-bottom: 1px solid $secondColorDark;
   height: 60px;
 }
-
+#punkte-wrapper{
+  background: none;
+  color: $secondColorDark;
+  margin-left: -1px;
+  border-left: 1px solid black;
+  font-size: 1.2em;
+}
 
 .player-wrapper.kommt_raus{
   background: $accentColor;
@@ -256,7 +262,7 @@ table#overview th {
   margin-bottom: -6px;
 }
 
-.player-name, #punkte-header {
+.player-name{
   font-size: 1.2rem;
   color: $secondColorText;
 }
@@ -290,7 +296,7 @@ tr.row.divider {
   display: flex;
   background: $secondColor;
   color: $secondColorText;
-  margin: 5px;
+  margin: 8px;
   border-radius: 2px;
   border: 1px solid $secondColorDark;
 }
@@ -298,7 +304,7 @@ tr.row.divider {
   background: transparent;
   color: $secondColorText;
   font-size: 1.2em;
-  padding: 6px 8px;
+  padding: 10px 12px;
 }
 #enter-results-btn, .are-you-sure-interaction{
   border-left: 1px solid $secondColorText;

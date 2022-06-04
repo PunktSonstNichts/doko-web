@@ -393,9 +393,9 @@ export default {
 #more-info-btn {
   background: $secondColor;
   color: $secondColorText;
-  margin: 5px;
+  margin: 8px;
   border-radius: 2px;
   border: 1px solid $secondColorDark;
-  font-size: 1.44em;
+  font-size: 1.2em;
 }
 </style>
