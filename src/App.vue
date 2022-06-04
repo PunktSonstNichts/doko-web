@@ -8,20 +8,26 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'App',
   computed: {
-    notLoggedInYet(){
+    allowedPages(){
       return !!(this.$route.name === "Login" || this.$route.name === "CreateUser");
     }
   },
   created() {
-    if(!localStorage.getItem("access_token") && !this.notLoggedInYet){
+    if(!localStorage.getItem("access_token") && !this.allowedPages){
       console.error(localStorage.getItem("access_token"), this.$route.name);
       this.$router.replace({
         path: "/login",
         query: { redirect: this.$router.currentRoute.fullPath }
       });
+    }else{
+      // check if user is for real logged in.
+      // If session expired, user will be kicked out
+      axios.get(this.hostname);
     }
   }
 }

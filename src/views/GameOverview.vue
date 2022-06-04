@@ -19,9 +19,6 @@ export default {
     gameID () {
       return this.$route.params.id
     },
-    graphUrl(){
-      return this.$hostname + '/result_plot/' + this.gameID + '.png';
-    }
   },
   created() {
     if(!this.gameID){
@@ -30,6 +27,13 @@ export default {
       this.gameFound = false;
       return;
     }
+
+     axios.get(`${this.$hostname}/result_plot/${this.gameID}`).then(result => {
+       // super hacky, server is just returning a String of a BASE64 encoded png image
+        this.graphUrl = result.data;
+     });
+
+
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
       this.loading = false;
       if(!result.data.gesperrt){
@@ -48,13 +52,17 @@ export default {
   },
   data(){
     return {
-      loading: false
+      loading: false,
+      graphUrl: null,
     }
   }
 }
 </script>
 
 <style scoped>
+h1{
+  text-align: center;
+}
 #graph{
   max-width: 100%;
 }
