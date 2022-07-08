@@ -21,16 +21,13 @@
     <div id="history">
       <h2>gespielte Games</h2>
       <div>
-        <router-link tag="div" to="/game/24" class="game_overview">
-          <div class="game_timestamp">Donnerstag, 12. August 2021</div>
+        <router-link v-for="game in gameList" :key="'spiel'+ game._id" tag="div" :to="'/game/' + game._id" class="game_overview">
+          <div class="game_timestamp">{{ game.timestamp}}</div>
           <div class="second_row">
-            <span>Till</span>
-            <span class="winner">Malte</span>
-            <span>Jannis</span>
-            <span>Carl</span>
+            <span v-for="player in game.spieler" :key="'spieler'+ player.id" :class="{'winner': player.position === 1}">{{ player.name }}</span>
           </div>
         </router-link>
-        <div class="game_overview">
+        <!-- <div class="game_overview">
           <div class="game_timestamp">Mittwoch, 11. August 2021</div>
           <div class="second_row">
             <span>Till</span>
@@ -38,7 +35,7 @@
             <span class="winner">Thibaud</span>
             <span>Alex</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -56,10 +53,15 @@ export default {
       playerToAdd: null,
       token: null,
       baseUrl: null,
+      gameList: []
     }
   },
   created() {
     this.baseUrl = location.origin + "/create_user/";
+    axios.get(`${this.$hostname}/get_player_stats`).then(result => {
+      this.gameList = result.data;
+      console.info(result);
+    })
   },
   methods: {
     generateToken(){
@@ -92,12 +94,17 @@ export default {
   padding: 5vh;
   align-items: center;
 }
-#create-game > button {
+#new-game-btn {
+  color: $accentColor;
+  background: $secondColor;
+  border: 1px solid $secondColorDark;
   padding: 8px 12px;
+  border-radius: 2px;
   font-size: 1.2em;
-  font-weight: bold;
 }
-
+#new-game-btn:hover{
+  color: $accentColorDark;
+}
 
 #add-player, #history{
   margin: 40px 12px;
