@@ -71,7 +71,7 @@ export default {
   transition-property: border, padding;
   transition-duration: 0.25s;
   transition-timing-function: cubic-bezier(0.66, 0.13, 0.4, 0.99);
-  margin: calc(10px + 1em) 8px 10px;
+  margin: calc(10px + 1em) 8px 4px;
 }
 
 .input_field.underline {

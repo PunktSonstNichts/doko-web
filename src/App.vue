@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="header">
-      <router-link :is="notLoggedInYet ? 'span' : 'router-link'" to="/me" tag="span">Online DoppelKopf Tracker</router-link>
+      <router-link :is="allowedPages ? 'span' : 'router-link'" to="/me" tag="span">Online DoppelKopf Tracker</router-link>
     </div>
     <router-view></router-view>
   </div>
@@ -27,7 +27,7 @@ export default {
     }else{
       // check if user is for real logged in.
       // If session expired, user will be kicked out
-      axios.get(this.hostname);
+      axios.get(this.$hostname);
     }
   }
 }
@@ -67,10 +67,15 @@ body, html{
   font-size: 1.2em;
 }
 
+h1, h2, h3, h4, h5, h5{
+  text-align: center;
+}
+
 button {
   border: 0;
   background: white;
   padding: 6px 8px;
+  cursor: pointer;
 }
 .btn {
   display: flex;
@@ -81,6 +86,7 @@ button {
   padding: 6px 8px;
   border-radius: 2px;
   border: 1px solid $secondColorDark;
+  cursor: pointer;
 }
 
 label {

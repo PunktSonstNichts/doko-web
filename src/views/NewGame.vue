@@ -7,14 +7,14 @@
         placeholder="Spieler*in 1"
         v-model="players.player1"
         :ignore-players="ignorePlayerIdsArray"/>
-    <span>Spieler*in 1 mischt die Karten</span>
+    <span class="input-helper">Spieler*in 1 mischt die Karten</span>
     <PlayerSearch
         autocomplete="off"
         type="text"
         placeholder="Spieler*in 2"
         v-model="players.player2"
         :ignore-players="ignorePlayerIdsArray"/>
-    <span>Spieler*in 2 kommt raus</span>
+    <span class="input-helper">Spieler*in 2 kommt raus</span>
     <PlayerSearch
         autocomplete="off"
         type="text"
@@ -33,6 +33,21 @@
         placeholder="Spieler*in 5 (optional)"
         v-model="players.player5"
         :ignore-players="ignorePlayerIdsArray"/>
+
+    <div id="game-options">
+      <h2>Optionen</h2>
+      <div>
+        <TextInput v-model="maxBock" type="number" placeholder="Maximale Anzahl an Bock"/>
+        <span class="input-helper">0 = ohne Bock</span>
+      </div>
+      <div id="game-options-solo">
+        <span>kommt der Solo-Spieler raus?</span>
+        <label>
+          <input type="checkbox" v-model="soloKommtRaus"><span>{{soloKommtRaus ? "ja" : "nein"}}</span>
+        </label>
+      </div>
+    </div>
+
     <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
     <button id="create-game-btn" @click="createRound()">Spiel starten!</button>
   </div>
@@ -41,10 +56,11 @@
 <script>
 import axios from "axios";
 import PlayerSearch from "@/modules/PlayerSearch"
+import TextInput from "@/modules/TextInput";
 
 export default {
   name: 'HelloWorld',
-  components: {PlayerSearch},
+  components: {TextInput, PlayerSearch},
   props: {
     msg: String
   },
@@ -64,6 +80,8 @@ export default {
         player4: null,
         player5: null,
       },
+      maxBock: 0,
+      soloKommtRaus: false,
       ignorePlayerIdsArray: [],
       }
   },
@@ -81,10 +99,16 @@ export default {
     createRound() {
       this.errorMsg = null;
       if (this.checkUserInput()) {
-        axios.post(`${this.$hostname}/new`, this.players).then(result => {
-          console.log(result);
-          this.$router.push({path: `/game/${result.data._id}`});
-        }).catch(error => console.error(error));
+        const options = {
+          maxBock: this.maxBock,
+          soloKommtRaus: this.soloKommtRaus
+        }
+        axios
+            .post(`${this.$hostname}/new`, {"players": this.players, "options": options})
+            .then(result => {
+              console.log(result);
+              this.$router.push({path: `/game/${result.data._id}`});
+            }).catch(error => console.error(error));
       }else{
         this.errorMsg = "Spieler 1-4 müssen gesetzt sein."
       }
@@ -124,6 +148,26 @@ a {
   font-size: 1.2em;
   margin-bottom: 12px;
 }
+.input-helper{
+  margin: 0 8px 2px;
+}
+
+#game-options{
+  margin: 12px;
+  border-radius: 3px;
+  border: 1px solid grey;
+}
+#game-options > *{
+  margin: 6px 0;
+  padding: 4px;
+}
+#game-options > div{
+  border-top: 1px solid grey;
+}
+#game-options-solo{
+  padding: 4px 12px !important;
+}
+
 #entry-error{
   margin: 5px;
   color: $dangerColorDark;

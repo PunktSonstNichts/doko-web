@@ -1,6 +1,6 @@
 <template>
   <div id="input-wrapper">
-    <input type="number" id="punkte-ohne-bock" v-model="punkteOhneBock" @input="calculateBockPunkte()"/>
+    <input type="number" id="punkte-ohne-bock" :class="{'wide-input': bockCount === 0}" v-model="punkteOhneBock" @input="calculateBockPunkte()"/>
     <ShowBock :bock-count="bockCount" v-if="bockCount > 0" id="bock-count"/>
     <input v-if="bockCount > 0" type="number" id="punkte-mit-bock" :value="punkteMitBock" :disabled="true"/>
   </div>
@@ -43,6 +43,9 @@ export default {
 }
 input{
   width: 42px;
+}
+.wide-input{
+  width: 68px;
 }
 #bock-count{
   margin: 2px 4px;
