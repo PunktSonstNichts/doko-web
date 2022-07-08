@@ -31,7 +31,7 @@
       <span class="question">Und wieviele Punkte?</span>
       <PunkteEingabe v-model="punkte" :bock-count="bockCountForRound"></PunkteEingabe>
     </div>
-    <div id="bock-wrapper">
+    <div id="bock-wrapper" v-if="!withoutBock">
       <span class="question">Gab es Bock?</span>
       <label>
         <input type="checkbox" v-model="bock"/>
@@ -102,6 +102,7 @@ export default {
       this.loading = false;
       this.players = result.data.spieler.filter(spieler => !spieler.aussetzen);
       this.bockCountForRound = result.data.remainingBock[0] || 0;
+      this.withoutBock = result.data.withoutBock;
     }).catch(error => console.error(error));
   },
   data() {
@@ -118,6 +119,7 @@ export default {
       punkte: null,
       bock: false,
       bockCountForRound: 0,
+      withoutBock: true,
       winner: null,
       players: []
     }
