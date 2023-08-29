@@ -105,10 +105,6 @@ export default {
   border-radius: 0;
 }
 
-.white .input_input {
-  color: white;
-}
-
 .input_label {
   display: block;
   position: absolute;
@@ -146,9 +142,6 @@ export default {
   transition-duration: 0.25s;
 }
 
-.white .input_focusline {
-  background: white;
-}
 
 .input_field.underline > .input_focusline {
   opacity: 1;

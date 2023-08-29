@@ -3,7 +3,7 @@
   <div id="game" v-else-if="gameFound">
     <!-- <div id="konsum">
       <button id="konsum-btn" @click="toggleKonsumModal()">{{isKonsumView ? "Zurück zum Spiel" : "Konsum eintragen"}}</button>
-    </div>  -->
+    </div> -->
     <div v-if="isKonsumView" id="konsum-overview">
       <div class="konsum-element">1 Bier</div>
       <div class="konsum-element">1 Wein</div>
@@ -30,26 +30,28 @@
         <tbody id="overview-punkte" v-if="!isKonsumView">
           <tr v-for="(runde, index) in runden" :key="runde.id" :class="{row: true, divider: index % spieler.length === spieler.length - 1}">
             <td v-for="(player, index) in pointsPerRound(runde)" :key="player.id + '.' + index + '.' + runde.punkte">
-              <div class="player-points">{{ player.punkte }} <span v-if="player.solo">S</span></div>
+              <div class="player-points">{{ player.punkte }} <span v-if="player.solo" class="solo-badge">S</span></div>
             </td>
             <td class="punkte-per-round">
-              <div class="runden-points">{{ runde.punkte }} <span v-if="runde.solo">S</span><ShowBock :bock-count="runde.bock"/></div>
+              <div class="runden-points">{{ runde.punkte }} <ShowBock :bock-count="runde.bock"/></div>
             </td>
           </tr>
-        <tr v-for="(bockCount, index) in remainingBock" :key="index" :class="{row: true, divider: (runden.length + index) % spieler.length === spieler.length - 1}">
-          <td :colspan="spieler.length">
-            <div class="player-points">&nbsp;</div>
-          </td>
-          <td>
-            <ShowBock :bock-count="bockCount" class="runden-points"/>
-          </td>
-        </tr>
-        <tr id="footer-row">
-          <td :colspan="spieler.length + 1"><button @click="undoLastRound()" v-if="runden.length > 0">letzte Runde löschen</button></td>
-        </tr>
+          <template v-if="!gesperrt">
+            <tr v-for="(bockCount, index) in remainingBock" :key="index" :class="{row: true, divider: (runden.length + index) % spieler.length === spieler.length - 1}">
+              <td :colspan="spieler.length">
+                <div class="player-points">&nbsp;</div>
+              </td>
+              <td>
+                <ShowBock :bock-count="bockCount" class="runden-points"/>
+              </td>
+            </tr>
+            <tr id="footer-row">
+              <td :colspan="spieler.length + 1"><button @click="undoLastRound()" v-if="runden.length > 0">letzte Runde löschen</button></td>
+            </tr>
+          </template>
         </tbody>
       </table>
-    <div id="interaction-wrapper">
+    <div id="interaction-wrapper" v-if="!gesperrt">
       <div id="complicated-btn">
         <button class="interaction-w-confirmation" @click="areYouSure = !areYouSure">
           {{areYouSure ? 'abbrechen' : 'beenden'}}
@@ -57,6 +59,9 @@
         <button class="are-you-sure-interaction" v-if="areYouSure" @click="lockGame()">Spiel beenden!</button>
         <router-link :to="`/game/${gameID}/entry`" tag="button" id="enter-results-btn" v-else>Ergebnisse eintragen</router-link>
       </div>
+    </div>
+    <div v-else>
+      <img id="graph" :src="graphUrl" />
     </div>
   </div>
   <div v-else id="game-not-found">
@@ -89,9 +94,9 @@ export default {
     }
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
       this.loading = false;
-      if(result.data.gesperrt){
-        // Spiel wurde beendet, ab jetzt gibts nurnoch ne Übersicht
-        this.$router.push(`/game/${this.gameID}/overview`);
+      this.gesperrt = result.data.gesperrt;
+      if(this.gesperrt){
+        this.loadGraph()
       }
       console.log(result);
       this.spieler = result.data.spieler;
@@ -110,6 +115,8 @@ export default {
       spieler: [],
       runden: [],
       remainingBock: [],
+      gesperrt: false,
+      graphUrl: "",
       isKonsumView: false,
       areYouSure: false,
       gameFound: false
@@ -146,7 +153,7 @@ export default {
       this.loading = true;
       axios.post(`${this.$hostname}/game/${this.gameID}/lock`).then(result => {
         this.loading = false;
-        this.$router.push(`/game/${this.gameID}/overview`);
+        this.gesperrt = true;
         console.log(result);
       }).catch(error => {
         console.error(error);
@@ -161,6 +168,12 @@ export default {
           this.remainingBock = result.data.remainingBock;
         });
       }
+    },
+    loadGraph(){
+      axios.get(`${this.$hostname}/result_plot/${this.gameID}`).then(result => {
+        // super hacky, server is just returning a String of a BASE64 encoded png image
+        this.graphUrl = result.data;
+      });
     }
   }
 }
@@ -233,7 +246,7 @@ table#overview th {
   height: 60px;
 }
 #punkte-wrapper{
-  background: none;
+  background: $background;
   color: $secondColorDark;
   margin-left: -1px;
   border-left: 1px solid black;
@@ -267,7 +280,7 @@ table#overview th {
   color: $secondColorText;
 }
 .player-points, .runden-points{
-  padding: 12px 16px;
+  padding: 12px 8px;
   text-align: center;
 }
 .player-points{
@@ -323,5 +336,9 @@ tr.row.divider {
   text-align: center;
   justify-content: center;
   padding: 8vmin;
+}
+
+#graph{
+  max-width: 100%;
 }
 </style>

@@ -173,7 +173,7 @@ export default {
   margin: 0 8px;
   padding: 5px;
   z-index: 2;
-  background: white;
+  background: $background;
   border: 1px solid $secondColorDark;
 }
 

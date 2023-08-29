@@ -23,11 +23,15 @@ export default {
   },
   data(){
     return {
-      punkteOhneBock: null,
+      punkteOhneBock: this.value,
       punkteMitBock: null
     }
   },
-  methods: {
+    created() {
+      console.log("this.value", this.value);
+      console.log(this.punkteOhneBock);
+    },
+    methods: {
     calculateBockPunkte(){
       this.punkteMitBock = this.punkteOhneBock * Math.pow(2 , this.bockCount);
       this.$emit("input", this.punkteMitBock);

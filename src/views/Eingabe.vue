@@ -29,7 +29,7 @@
     </div>
     <div id="punkte-wrapper">
       <span class="question">Und wieviele Punkte?</span>
-      <PunkteEingabe v-model="punkte" :bock-count="bockCountForRound"></PunkteEingabe>
+      <PunkteEingabe v-model="punkte" :bock-count="bockCountForRound" :key="punkteEingabe"></PunkteEingabe>
     </div>
     <div id="bock-wrapper" v-if="!withoutBock">
       <span class="question">Gab es Bock?</span>
@@ -222,7 +222,7 @@ export default {
         this.errorMsg = "Wer hat gewonnen?";
         return false;
       }
-      if(!this.punkte){
+      if(!this.punkte && this.punkte !== 0){
         this.errorMsg = "Wie viele Punkte gab es?";
         return false;
       }
