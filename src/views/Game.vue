@@ -93,7 +93,6 @@ export default {
       return;
     }
     axios.get(`${this.$hostname}/game/${this.gameID}`).then(result => {
-      this.loading = false;
       this.gesperrt = result.data.gesperrt;
       if(this.gesperrt){
         this.loadGraph()
@@ -105,8 +104,9 @@ export default {
       this.gameFound = true;
     }).catch(error => {
       console.error(error);
-      this.loading = false;
       this.gameFound = false;
+    }).finally(() => {
+        this.loading = false;
     });
   },
   data(){

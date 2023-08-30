@@ -25,7 +25,13 @@
     </div>
     <div id="history">
       <h2>gespielte Games</h2>
-      <div>
+      <Loading v-if="this.loading"/>
+      <div v-else-if="this.gameList.length === 0">
+          Starte mit einem
+          <router-link to="/game" tag="a">Klick</router-link>
+          dein erstes Spiel!
+      </div>
+      <div v-else>
         <router-link v-for="game in gameList" :key="'spiel'+ game._id" tag="div" :to="'/game/' + game._id" :class="['game_overview', !game.gesperrt || 'locked']">
           <HumanReadableTime
               class="game_timestamp"
@@ -45,26 +51,31 @@ import PlayerSearch from "@/modules/PlayerSearch"
 import axios from "axios";
 import HumanReadableTime from "@/modules/HumanReadableTime";
 import moment from "moment";
+import Loading from "@/modules/Loading.vue";
 export default {
   // eslint-disable-next-line
   name: "User",
-  components: {HumanReadableTime, PlayerSearch},
+  components: {Loading, HumanReadableTime, PlayerSearch},
   data(){
     return {
       playerToAdd: null,
       token: null,
       baseUrl: null,
+      loading: false,
       gameList: []
     }
   },
   created() {
     this.baseUrl = location.origin + "/create_user/";
+    this.loading = true;
     axios.get(`${this.$hostname}/get_player_stats`).then(result => {
       this.gameList = result.data;
       this.gameList.sort(
           (objA, objB) => Number(this.getTime(objB.timestamp)) - Number(this.getTime(objA.timestamp)),
       );
       console.info(result);
+    }).finally(() => {
+        this.loading = false;
     });
   },
   methods: {
@@ -113,13 +124,16 @@ export default {
   color: $accentColorDark;
 }
 #stats-btn {
-  background: gold;
+  /* background: gold;
   background: linear-gradient(145deg, gold 0%, #edbb23 47%, #fdbb2d 100%);
   text-shadow: 0px 0px 2px goldenrod;
   border: 1px solid gold;
+  color: #1f2a34; */
+  background: none;
+  border: 3px solid gold;
+  color: goldenrod;
   box-shadow: 0 1px 6px -3px black;
-  transition: all 0.32s cubic-bezier(0.66, 0.13, 0.4, 0.99);;
-  color: #1f2a34;
+  transition: all 0.32s cubic-bezier(0.66, 0.13, 0.4, 0.99);
   border-radius: 4px;
   font-size: 1.8em;
   font-weight: bold;
@@ -127,8 +141,9 @@ export default {
   width: calc(100% - 24px);
 }
 #stats-btn:hover{
-  background: linear-gradient(145deg, #edbb23 0%, gold 47%, #e7aa28 100%);
-  box-shadow: 0 1px 10px -2px black;
+  /*  background: linear-gradient(145deg, #edbb23 0%, gold 47%, #e7aa28 100%); */
+  color: gold;
+  box-shadow: 0 2px 7px -2px black;
 }
 
 
