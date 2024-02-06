@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         printDate() {
-            this.timeString =
+            this.timeString = "am " +
                 ("0" + this.time.getDate()).slice(-2) +
                 "." +
                 ("0" + (this.time.getMonth() + 1)).slice(-2) +
@@ -73,5 +73,3 @@ export default {
     }
 };
 </script>
-
-<style scoped></style>

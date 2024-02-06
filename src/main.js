@@ -15,12 +15,13 @@ import NewGame from "@/views/NewGame"
 import Game from "@/views/Game"
 import Eingabe from "@/views/Eingabe";
 import Login from "@/views/Login";
-import User from "@/views/User";
+import User from "@/views/MainPage";
 import axios from "axios";
 import CreateUser from "@/views/CreateUser";
 import Upload from "@/views/Upload";
 import GameOverview from "@/views/GameOverview";
 import PlayerOverview from "@/views/PlayerOverview";
+import PlayerHistory from "@/views/PlayerHistory.vue";
 
 const router = new VueRouter({
   mode: "history",
@@ -37,7 +38,7 @@ const router = new VueRouter({
     },
     {
       path: "/me",
-      name: "User",
+      name: "MainPage",
       component: User
     },
     {
@@ -54,6 +55,11 @@ const router = new VueRouter({
       path: "/stats",
       name: "stats",
       component: PlayerOverview
+    },
+    {
+      path: "/history",
+      name: "history",
+      component: PlayerHistory
     },
     {
       path: "/game/:id",
@@ -111,7 +117,7 @@ axios.interceptors.response.use(
 
           case 401:
           case 403:
-            if(router.currentRoute.name !== "Login"){
+            if(!(router.currentRoute.name === "Login" || router.currentRoute.name === "CreateUser")){
               router.replace({
                 path: "/login",
                 query: { redirect: router.currentRoute.fullPath }

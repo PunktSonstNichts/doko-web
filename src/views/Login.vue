@@ -1,5 +1,12 @@
 <template>
   <div id="login-wrapper">
+    <div id="welcome-text">
+      <p>
+        Herzlich willkommen in dem Bereich des Internets,
+        in dem du ganz ungestört deine analogen Doppelkopfspiele
+        digital aufschreiben & auswerten lassen kannst..<br>Viel Spaß!
+      </p>
+    </div>
     <TextInput autocomplete="false" type="text" placeholder="Name" v-model="login.username"/>
     <TextInput autocomplete="false" type="password" placeholder="Passwort" v-model="login.password" v-on:keyup.enter="handleLoginClick"/>
     <div id="entry-error" :class="errorMsg ? 'active' : ''">&nbsp;{{errorMsg}}&nbsp;</div>
@@ -57,6 +64,10 @@ export default {
 #login-wrapper{
   display: flex;
   flex-direction: column;
+  padding: 8px;
+  margin: auto !important;
+  width: 96% !important;
+  max-width: 420px;
 }
 #entry-error{
   margin: 5px;

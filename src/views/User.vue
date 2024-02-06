@@ -122,6 +122,7 @@ export default {
 }
 #new-game-btn:hover{
   color: $accentColorDark;
+  box-shadow: 0 2px 7px -2px #1f2a34;
 }
 #stats-btn {
   /* background: gold;
@@ -182,7 +183,7 @@ h2{
 
 
 .game_overview {
-  margin: 12px;
+  margin: 12px 5px;
   padding: 4px;
   border-radius: 3px;
   border: 1px solid $secondColor;
